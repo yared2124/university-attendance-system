@@ -1,0 +1,446 @@
+import { Role, AttendanceStatus, SessionMode, UserSessionProfile, BatchKPI } from "@/types";
+
+export interface MockUser {
+  id: string;
+  phoneNumber: string;
+  telegramId?: string | null;
+  fullName: string;
+  studentId?: string | null;
+  role: Role;
+  batchYear?: number | null;
+  isActive: boolean;
+}
+
+export interface MockCourse {
+  id: string;
+  courseCode: string;
+  title: string;
+  batchYear: number;
+  instructorIds: string[];
+}
+
+export interface MockAttendanceRecord {
+  id: string;
+  sessionId: string;
+  studentId: string;
+  status: AttendanceStatus;
+  markedAt: string;
+  excuseReason?: string | null;
+  reconciledById?: string | null;
+  reconciledAt?: string | null;
+}
+
+export interface MockAttendanceSession {
+  id: string;
+  courseId: string;
+  openedById: string;
+  mode: SessionMode;
+  isClosed: boolean;
+  createdAt: string;
+  closedAt?: string | null;
+  expiresAt: string;
+}
+
+// Global in-memory mock state for seamless dev & demo execution
+class DataStore {
+  public users: MockUser[] = [
+    // Instructors & Dept Head
+    {
+      id: "inst_1",
+      phoneNumber: "+251911000001",
+      telegramId: "123456789",
+      fullName: "Dr. Yared Tadesse",
+      role: "DEPT_HEAD",
+      isActive: true,
+    },
+    {
+      id: "inst_2",
+      phoneNumber: "+251911000002",
+      telegramId: "987654321",
+      fullName: "Eng. Alazar Tesfaye",
+      role: "INSTRUCTOR",
+      isActive: true,
+    },
+    {
+      id: "inst_3",
+      phoneNumber: "+251911000003",
+      telegramId: "456123789",
+      fullName: "Dr. Bethlehem Girma",
+      role: "INSTRUCTOR",
+      isActive: true,
+    },
+
+    // Batch Year 3 Students (Sample Class)
+    {
+      id: "stu_301",
+      phoneNumber: "+251922110001",
+      telegramId: "100001",
+      fullName: "Abebe Kebede",
+      studentId: "UGR/1401/14",
+      role: "STUDENT",
+      batchYear: 3,
+      isActive: true,
+    },
+    {
+      id: "stu_302",
+      phoneNumber: "+251922110002",
+      telegramId: "100002",
+      fullName: "Chaltu Desta",
+      studentId: "UGR/1402/14",
+      role: "STUDENT",
+      batchYear: 3,
+      isActive: true,
+    },
+    {
+      id: "stu_303",
+      phoneNumber: "+251922110003",
+      telegramId: "100003",
+      fullName: "Dawit Haile",
+      studentId: "UGR/1403/14",
+      role: "STUDENT",
+      batchYear: 3,
+      isActive: true,
+    },
+    {
+      id: "stu_304",
+      phoneNumber: "+251922110004",
+      telegramId: null, // Pending first /start
+      fullName: "Eyerusalem Bekele",
+      studentId: "UGR/1404/14",
+      role: "STUDENT",
+      batchYear: 3,
+      isActive: true,
+    },
+    {
+      id: "stu_305",
+      phoneNumber: "+251922110005",
+      telegramId: "100005",
+      fullName: "Fikadu Assefa",
+      studentId: "UGR/1405/14",
+      role: "STUDENT",
+      batchYear: 3,
+      isActive: true,
+    },
+    {
+      id: "stu_306",
+      phoneNumber: "+251922110006",
+      telegramId: "100006",
+      fullName: "Genet Alemayehu",
+      studentId: "UGR/1406/14",
+      role: "STUDENT",
+      batchYear: 3,
+      isActive: true,
+    },
+    {
+      id: "stu_307",
+      phoneNumber: "+251922110007",
+      telegramId: "100007",
+      fullName: "Hanna Solomon",
+      studentId: "UGR/1407/14",
+      role: "STUDENT",
+      batchYear: 3,
+      isActive: true,
+    },
+
+    // Batch Year 1 Students
+    {
+      id: "stu_101",
+      phoneNumber: "+251933000001",
+      telegramId: "200001",
+      fullName: "Kidus Melaku",
+      studentId: "UGR/2801/16",
+      role: "STUDENT",
+      batchYear: 1,
+      isActive: true,
+    },
+    {
+      id: "stu_102",
+      phoneNumber: "+251933000002",
+      telegramId: "200002",
+      fullName: "Lensa Negash",
+      studentId: "UGR/2802/16",
+      role: "STUDENT",
+      batchYear: 1,
+      isActive: true,
+    },
+
+    // Batch Year 4 Students
+    {
+      id: "stu_401",
+      phoneNumber: "+251944000001",
+      telegramId: "300001",
+      fullName: "Marta Yohannes",
+      studentId: "UGR/0951/13",
+      role: "STUDENT",
+      batchYear: 4,
+      isActive: true,
+    },
+    {
+      id: "stu_402",
+      phoneNumber: "+251944000002",
+      telegramId: "300002",
+      fullName: "Natnael Daniel",
+      studentId: "UGR/0952/13",
+      role: "STUDENT",
+      batchYear: 4,
+      isActive: true,
+    },
+
+    // Batch Year 5 Students
+    {
+      id: "stu_501",
+      phoneNumber: "+251955000001",
+      telegramId: "400001",
+      fullName: "Rediet Kassahun",
+      studentId: "UGR/0211/12",
+      role: "STUDENT",
+      batchYear: 5,
+      isActive: true,
+    },
+  ];
+
+  public courses: MockCourse[] = [
+    {
+      id: "course_1",
+      courseCode: "SEng3112",
+      title: "Software Requirements Engineering",
+      batchYear: 3,
+      instructorIds: ["inst_1", "inst_2"],
+    },
+    {
+      id: "course_2",
+      courseCode: "SEng4111",
+      title: "Cloud Computing & Microservices",
+      batchYear: 4,
+      instructorIds: ["inst_2"],
+    },
+    {
+      id: "course_3",
+      courseCode: "SEng2104",
+      title: "Data Structures & Algorithms",
+      batchYear: 2,
+      instructorIds: ["inst_3"],
+    },
+    {
+      id: "course_4",
+      courseCode: "SEng1101",
+      title: "Introduction to Software Engineering",
+      batchYear: 1,
+      instructorIds: ["inst_1"],
+    },
+    {
+      id: "course_5",
+      courseCode: "SEng5102",
+      title: "Capstone System Architecture",
+      batchYear: 5,
+      instructorIds: ["inst_1", "inst_3"],
+    },
+  ];
+
+  public sessions: MockAttendanceSession[] = [
+    {
+      id: "sess_active_1",
+      courseId: "course_1",
+      openedById: "inst_1",
+      mode: "DYNAMIC_QR",
+      isClosed: false,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "sess_prev_1",
+      courseId: "course_1",
+      openedById: "inst_1",
+      mode: "DYNAMIC_QR",
+      isClosed: true,
+      createdAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+      closedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000 + 45 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() - 3 * 24 * 3600 * 1000 + 15 * 60 * 1000).toISOString(),
+    },
+  ];
+
+  public records: MockAttendanceRecord[] = [
+    // Historical session records for SEng3112
+    {
+      id: "rec_1",
+      sessionId: "sess_prev_1",
+      studentId: "stu_301",
+      status: "PRESENT",
+      markedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      id: "rec_2",
+      sessionId: "sess_prev_1",
+      studentId: "stu_302",
+      status: "PRESENT",
+      markedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      id: "rec_3",
+      sessionId: "sess_prev_1",
+      studentId: "stu_303",
+      status: "ABSENT",
+      markedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      id: "rec_4",
+      sessionId: "sess_prev_1",
+      studentId: "stu_304",
+      status: "EXCUSED",
+      markedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+      excuseReason: "Approved university medical certificate verified by clinic",
+      reconciledById: "inst_1",
+      reconciledAt: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      id: "rec_5",
+      sessionId: "sess_prev_1",
+      studentId: "stu_305",
+      status: "PRESENT",
+      markedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      id: "rec_6",
+      sessionId: "sess_prev_1",
+      studentId: "stu_306",
+      status: "PRESENT",
+      markedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      id: "rec_7",
+      sessionId: "sess_prev_1",
+      studentId: "stu_307",
+      status: "ABSENT",
+      markedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    },
+  ];
+
+  // Helper Methods
+  public getBatchKPIs(): BatchKPI[] {
+    const batches = [1, 2, 3, 4, 5];
+    const names = [
+      "Year 1 (Freshman)",
+      "Year 2 (Sophomore)",
+      "Year 3 (Junior)",
+      "Year 4 (Senior)",
+      "Year 5 (Finalists)",
+    ];
+
+    return batches.map((year, idx) => {
+      const students = this.users.filter((u) => u.role === "STUDENT" && u.batchYear === year);
+      const studentIds = new Set(students.map((s) => s.id));
+      const batchRecords = this.records.filter((r) => studentIds.has(r.studentId));
+
+      const present = batchRecords.filter((r) => r.status === "PRESENT").length;
+      const absent = batchRecords.filter((r) => r.status === "ABSENT").length;
+      const totalEligible = present + absent;
+
+      const rate = totalEligible > 0 ? Math.round((present / totalEligible) * 100) : 92;
+      const atRisk = students.filter((s) => {
+        const myRecs = batchRecords.filter((r) => r.studentId === s.id);
+        const myP = myRecs.filter((r) => r.status === "PRESENT").length;
+        const myA = myRecs.filter((r) => r.status === "ABSENT").length;
+        if (myP + myA === 0) return false;
+        return (myP / (myP + myA)) * 100 < 75;
+      }).length;
+
+      const activeSessions = this.sessions.filter((sess) => {
+        const c = this.courses.find((c) => c.id === sess.courseId);
+        return c?.batchYear === year && !sess.isClosed;
+      }).length;
+
+      return {
+        batchYear: year,
+        name: names[idx],
+        totalStudents: students.length,
+        overallAttendanceRate: rate,
+        atRiskCount: atRisk,
+        activeSessionsCount: activeSessions,
+      };
+    });
+  }
+
+  public recordCheckIn(sessionId: string, studentId: string): MockAttendanceRecord {
+    const existing = this.records.find(
+      (r) => r.sessionId === sessionId && r.studentId === studentId
+    );
+    if (existing) {
+      return existing;
+    }
+
+    const newRecord: MockAttendanceRecord = {
+      id: `rec_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      sessionId,
+      studentId,
+      status: "PRESENT",
+      markedAt: new Date().toISOString(),
+    };
+    this.records.push(newRecord);
+    return newRecord;
+  }
+
+  public closeSessionAndMaterializeAbsence(sessionId: string): {
+    presentCount: number;
+    absentCount: number;
+  } {
+    const session = this.sessions.find((s) => s.id === sessionId);
+    if (!session) throw new Error("Session not found");
+
+    session.isClosed = true;
+    session.closedAt = new Date().toISOString();
+
+    const course = this.courses.find((c) => c.id === session.courseId);
+    if (!course) throw new Error("Course not found");
+
+    // Cohort students for this course's batch
+    const cohortStudents = this.users.filter(
+      (u) => u.role === "STUDENT" && u.batchYear === course.batchYear && u.isActive
+    );
+
+    let absentCount = 0;
+    let presentCount = 0;
+
+    for (const student of cohortStudents) {
+      const existingRecord = this.records.find(
+        (r) => r.sessionId === sessionId && r.studentId === student.id
+      );
+
+      if (!existingRecord) {
+        // Materialize as ABSENT
+        this.records.push({
+          id: `rec_abs_${Date.now()}_${student.id}`,
+          sessionId,
+          studentId: student.id,
+          status: "ABSENT",
+          markedAt: new Date().toISOString(),
+        });
+        absentCount++;
+      } else if (existingRecord.status === "PRESENT") {
+        presentCount++;
+      }
+    }
+
+    return { presentCount, absentCount };
+  }
+
+  public reconcileExcuse(
+    recordId: string,
+    excuseReason: string,
+    facultyId: string
+  ): MockAttendanceRecord {
+    const record = this.records.find((r) => r.id === recordId);
+    if (!record) throw new Error("Attendance record not found");
+
+    record.status = "EXCUSED";
+    record.excuseReason = excuseReason;
+    record.reconciledById = facultyId;
+    record.reconciledAt = new Date().toISOString();
+
+    return record;
+  }
+}
+
+// Singleton global mock data store
+const globalForStore = globalThis as unknown as { mockStore: DataStore };
+export const dataStore = globalForStore.mockStore || new DataStore();
+if (process.env.NODE_ENV !== "production") globalForStore.mockStore = dataStore;

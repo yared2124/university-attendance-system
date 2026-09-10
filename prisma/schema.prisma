@@ -1,0 +1,129 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  DEPT_HEAD
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED
+}
+
+enum SessionMode {
+  DYNAMIC_QR
+  ROLLING_CODE
+  HYBRID
+}
+
+model AcademicYear {
+  id        String   @id @default(cuid())
+  yearName  String   // e.g. "2025/2026"
+  semester  Int      // 1 or 2
+  startDate DateTime
+  endDate   DateTime
+  isActive  Boolean  @default(true)
+  courses   Course[]
+  createdAt DateTime @default(now())
+
+  @@unique([yearName, semester])
+  @@index([isActive])
+}
+
+model User {
+  id          String   @id @default(cuid())
+  phoneNumber String   @unique // E.164 format (e.g. +251911223344)
+  telegramId  BigInt?  @unique // Bound upon Telegram Contact Handshake
+  fullName    String
+  studentId   String?  @unique // Department ID (e.g. "UGR/1420/14")
+  role        Role     @default(STUDENT)
+  batchYear   Int?     // Academic Year (1 to 5)
+  isActive    Boolean  @default(true)
+
+  // Relations
+  coursesTaught      CourseInstructor[]
+  attendances        AttendanceRecord[]
+  createdSessions    AttendanceSession[] @relation("SessionInstructor")
+  excusedAttendances AttendanceRecord[]  @relation("ExcusedByFaculty")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role, batchYear])
+  @@index([telegramId])
+}
+
+model Course {
+  id             String       @id @default(cuid())
+  courseCode     String       // e.g. "SEng3112"
+  title          String       // e.g. "Software Architecture"
+  batchYear      Int          // Cohort Year: 1, 2, 3, 4, 5
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+
+  instructors CourseInstructor[]
+  sessions    AttendanceSession[]
+  createdAt   DateTime            @default(now())
+
+  @@unique([courseCode, academicYearId])
+  @@index([batchYear])
+}
+
+model CourseInstructor {
+  id           String @id @default(cuid())
+  courseId     String
+  instructorId String
+  course       Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  instructor   User   @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, instructorId])
+  @@index([instructorId])
+}
+
+model AttendanceSession {
+  id         String      @id @default(cuid())
+  courseId   String
+  course     Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  openedById String
+  openedBy   User        @relation("SessionInstructor", fields: [openedById], references: [id])
+  mode       SessionMode @default(DYNAMIC_QR)
+  isClosed   Boolean     @default(false)
+  expiresAt  DateTime
+  closedAt   DateTime?
+  createdAt  DateTime    @default(now())
+
+  records AttendanceRecord[]
+
+  @@index([courseId, isClosed])
+  @@index([openedById])
+}
+
+model AttendanceRecord {
+  id        String            @id @default(cuid())
+  sessionId String
+  session   AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status    AttendanceStatus  @default(PRESENT)
+  markedAt  DateTime          @default(now())
+
+  // Audit Trail for EXCUSED Reconciliation
+  excuseReason   String?
+  reconciledById String?
+  reconciledBy   User?     @relation("ExcusedByFaculty", fields: [reconciledById], references: [id])
+  reconciledAt   DateTime?
+
+  @@unique([sessionId, studentId])
+  @@index([studentId, status])
+  @@index([sessionId, status])
+}
