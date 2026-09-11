@@ -28,6 +28,8 @@ import {
   FileText,
   AlertOctagon,
   ChevronDown,
+  BookOpen,
+  Check,
 } from "lucide-react";
 
 interface StudentRow {
@@ -52,13 +54,28 @@ interface ParsedUploadRow {
   isValidPhone: boolean;
 }
 
+interface FacultyComplianceRow {
+  facultyName: string;
+  courseCode: string;
+  courseTitle: string;
+  batchYear: number;
+  scheduledTime: string;
+  sessionStatus: "COMPLETED" | "LIVE" | "NOT_OPENED";
+  attendanceTaken: boolean;
+  markedStudents: number;
+  totalEnrolled: number;
+}
+
 export default function DepartmentHeadDashboard() {
+  // Institution & Department Selection
+  const [selectedDepartment, setSelectedDepartment] = useState("Software Engineering");
+
   // Academic Hierarchy States
   const [academicYear, setAcademicYear] = useState("2025/2026");
   const [selectedSemester, setSelectedSemester] = useState<1 | 2>(1);
   const [selectedBatchFilter, setSelectedBatchFilter] = useState<number | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"roster" | "atRisk" | "upload" | "history">("atRisk");
+  const [activeTab, setActiveTab] = useState<"atRisk" | "facultyCompliance" | "roster" | "upload">("atRisk");
 
   // Roster Drag & Drop State
   const [isDragging, setIsDragging] = useState(false);
@@ -82,7 +99,7 @@ export default function DepartmentHeadDashboard() {
   const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
   const [broadcastTargetBatch, setBroadcastTargetBatch] = useState<number>(3);
   const [customBroadcastMessage, setCustomBroadcastMessage] = useState(
-    "🚨 አስቸኳይ የዲፓርትመንት ማስጠንቀቂያ: የአቴንዳንስ ምጣኔዎ ከ 75% በታች በመሆኑ ለፈተና እንዳይከለከሉ በአስቸኳይ ዲፓርትመንት ቢሮ ቀርበው ያነጋግሩ!"
+    "Official Notice from Injibara University Department Office: Your attendance is currently below 75%. Please report to the department head office immediately to avoid exam exclusion."
   );
   const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
 
@@ -93,6 +110,54 @@ export default function DepartmentHeadDashboard() {
     { year: 3, name: "Year 3 (Junior)", total: 28, rate: 84, atRisk: 3 },
     { year: 4, name: "Year 4 (Senior)", total: 30, rate: 91, atRisk: 1 },
     { year: 5, name: "Year 5 (Finalists)", total: 24, rate: 73, atRisk: 5 },
+  ];
+
+  // Faculty Daily Compliance Monitoring Data
+  const facultyComplianceData: FacultyComplianceRow[] = [
+    {
+      facultyName: "Dr. Yared Tadesse",
+      courseCode: "SEng3112",
+      courseTitle: "Software Requirements Engineering",
+      batchYear: 3,
+      scheduledTime: "08:30 - 10:00 AM",
+      sessionStatus: "LIVE",
+      attendanceTaken: true,
+      markedStudents: 24,
+      totalEnrolled: 28,
+    },
+    {
+      facultyName: "Ins. Henok Alemu",
+      courseCode: "SEng1101",
+      courseTitle: "Intro to Computing",
+      batchYear: 1,
+      scheduledTime: "10:30 - 12:00 PM",
+      sessionStatus: "COMPLETED",
+      attendanceTaken: true,
+      markedStudents: 34,
+      totalEnrolled: 35,
+    },
+    {
+      facultyName: "Ins. Selamawit Gizaw",
+      courseCode: "SEng2104",
+      courseTitle: "Data Structures & Algorithms",
+      batchYear: 2,
+      scheduledTime: "01:30 - 03:00 PM",
+      sessionStatus: "NOT_OPENED",
+      attendanceTaken: false,
+      markedStudents: 0,
+      totalEnrolled: 32,
+    },
+    {
+      facultyName: "Dr. Biruk Bekele",
+      courseCode: "SEng5102",
+      courseTitle: "Senior Capstone Project II",
+      batchYear: 5,
+      scheduledTime: "03:30 - 05:00 PM",
+      sessionStatus: "NOT_OPENED",
+      attendanceTaken: false,
+      markedStudents: 0,
+      totalEnrolled: 24,
+    },
   ];
 
   // Live Student Roster
@@ -249,7 +314,7 @@ export default function DepartmentHeadDashboard() {
       if (res.ok) {
         setUploadMessage({
           type: "success",
-          text: `✅ Successfully whitelisted ${data.addedCount} new students and updated ${data.updatedCount} existing records. Telegram identity binding is now active.`,
+          text: `✅ Successfully whitelisted ${data.addedCount} new students and updated ${data.updatedCount} records. Telegram identity binding is active.`,
         });
       } else {
         setUploadMessage({ type: "error", text: data.error || "Failed to commit roster upload." });
@@ -370,11 +435,25 @@ export default function DepartmentHeadDashboard() {
           </div>
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30 font-ethiopic">
-                የዲፓርትመንት አመራር ገጽ • Department Head Console
+              <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30">
+                Injibara University
               </span>
 
-              {/* Academic Year Dropdown */}
+              {/* Department Switcher */}
+              <div className="flex items-center gap-1 bg-[#FFFFFF] border border-[#EADBCE] rounded-lg px-2.5 py-0.5 text-xs text-[#2C221E] font-bold shadow-sm">
+                <span className="text-[#706259] font-medium">Dept:</span>
+                <select
+                  value={selectedDepartment}
+                  onChange={(e) => setSelectedDepartment(e.target.value)}
+                  className="bg-transparent font-bold text-[#2C221E] focus:outline-none cursor-pointer"
+                >
+                  <option value="Software Engineering">Software Engineering</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Information Technology">Information Technology</option>
+                </select>
+              </div>
+
+              {/* Academic Year Selector */}
               <div className="flex items-center gap-1.5 bg-[#FFFFFF] border border-[#EADBCE] rounded-lg px-2.5 py-1 text-xs text-[#706259] font-bold shadow-sm">
                 <Calendar className="w-3.5 h-3.5 text-[#B8860B]" />
                 <span>{academicYear}</span>
@@ -384,32 +463,32 @@ export default function DepartmentHeadDashboard() {
               <div className="flex items-center bg-[#ECE4D8] border border-[#EADBCE] rounded-xl p-1">
                 <button
                   onClick={() => setSelectedSemester(1)}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all font-ethiopic ${
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                     selectedSemester === 1
                       ? "bg-[#B8860B] text-white shadow-sm"
                       : "text-[#706259] hover:text-[#2C221E]"
                   }`}
                 >
-                  ሴሚስተር 1
+                  Semester 1
                 </button>
                 <button
                   onClick={() => setSelectedSemester(2)}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all font-ethiopic ${
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                     selectedSemester === 2
                       ? "bg-[#B8860B] text-white shadow-sm"
                       : "text-[#706259] hover:text-[#2C221E]"
                   }`}
                 >
-                  ሴሚስተር 2
+                  Semester 2
                 </button>
               </div>
             </div>
 
-            <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-[#2C221E] font-ethiopic">
-              የሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት
+            <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-[#2C221E]">
+              Department Head Console • {selectedDepartment}
             </h1>
-            <p className="text-xs text-[#706259] font-medium font-ethiopic">
-              የአቴንዳንስ ቁጥጥር፣ የቴሌግራም ቦት ማስጠንቀቂያና የባች ክትትል (Addis Ababa University)
+            <p className="text-xs text-[#706259] font-medium">
+              Academic Cohort Oversight, Telegram Bot Broadcasts, Faculty Compliance & Roster Control
             </p>
           </div>
         </div>
@@ -418,24 +497,24 @@ export default function DepartmentHeadDashboard() {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setIsBroadcastModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#FAEAE9] border border-[#F8D7DA] hover:bg-[#F8D7DA] text-[#B83833] font-bold text-xs rounded-xl shadow-sm transition-all font-ethiopic"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#FAEAE9] border border-[#F8D7DA] hover:bg-[#F8D7DA] text-[#B83833] font-bold text-xs rounded-xl shadow-sm transition-all"
           >
             <AlertOctagon className="w-4 h-4 text-[#B83833]" />
-            የአስቸኳይ ማስጠንቀቂያ ላክ
+            Send Broadcast Warning
           </button>
           <a
             href={`/api/admin/export?batchYear=${selectedBatchFilter === "ALL" ? 3 : selectedBatchFilter}`}
             target="_blank"
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-colors font-ethiopic"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-colors"
           >
             <Download className="w-4 h-4 text-[#1E7E53]" />
-            ሪፖርት አውርድ (.xlsx)
+            Export Report (.xlsx)
           </a>
           <Link
             href="/instructor"
-            className="flex items-center gap-2 px-4 py-2.5 btn-ochre text-xs font-bold rounded-xl shadow-md transition-all font-ethiopic"
+            className="flex items-center gap-2 px-4 py-2.5 btn-ochre text-xs font-bold rounded-xl shadow-md transition-all"
           >
-            የመምህራን ማሳያ <ArrowUpRight className="w-4 h-4" />
+            Instructor View <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>
       </header>
@@ -443,10 +522,10 @@ export default function DepartmentHeadDashboard() {
       {/* Dispatched Notification Success Banner */}
       {dispatchedSuccessStudent && (
         <div className="p-4 rounded-2xl bg-[#E8F3EE] border border-[#C2E8CA] text-[#1E7E53] flex items-center justify-between animate-in fade-in-50">
-          <div className="flex items-center gap-3 text-xs font-bold font-ethiopic">
+          <div className="flex items-center gap-3 text-xs font-bold">
             <CheckCircle2 className="w-4 h-4 text-[#1E7E53] shrink-0" />
             <span>
-              የቴሌግራም ማስጠንቀቂያ ለ <strong>{dispatchedSuccessStudent}</strong> በተሳካ ሁኔታ ተልኳል።
+              Telegram Warning dispatched successfully to <strong>{dispatchedSuccessStudent}</strong>.
             </span>
           </div>
           <button
@@ -461,11 +540,11 @@ export default function DepartmentHeadDashboard() {
       {/* Primary KPI Metrics */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="warm-card p-5 space-y-2">
-          <span className="text-xs font-bold text-[#706259] font-ethiopic">የዲፓርትመንቱ አጠቃላይ ምጣኔ</span>
+          <span className="text-xs font-bold text-[#706259]">Overall Department Attendance</span>
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-black text-[#2C221E] tracking-tight">88.4%</span>
-            <span className="text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA] font-ethiopic">
-              ጥሩ ደረጃ
+            <span className="text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA]">
+              Good Standing
             </span>
           </div>
           <div className="w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden">
@@ -474,39 +553,39 @@ export default function DepartmentHeadDashboard() {
         </div>
 
         <div className="warm-card p-5 space-y-2 border-l-4 border-l-[#B83833]">
-          <span className="text-xs font-bold text-[#706259] font-ethiopic">አስቸኳይ ማስጠንቀቂያ (&lt;75%)</span>
+          <span className="text-xs font-bold text-[#706259]">Critical Risk Cohort (&lt;75%)</span>
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-black text-[#B83833] tracking-tight">
-              {atRiskStudents.length} ተማሪዎች
+              {atRiskStudents.length} Students
             </span>
-            <span className="text-xs font-bold text-[#B83833] bg-[#FAEAE9] px-2.5 py-0.5 rounded-lg border border-[#F8D7DA] font-ethiopic">
-              ፈተና ሊከለከሉ ይችላሉ
+            <span className="text-xs font-bold text-[#B83833] bg-[#FAEAE9] px-2.5 py-0.5 rounded-lg border border-[#F8D7DA]">
+              Action Required
             </span>
           </div>
-          <p className="text-[11px] text-[#706259] font-medium font-ethiopic">ከ 75% በታች የቀሩና ክትትል የሚሹ</p>
+          <p className="text-[11px] text-[#706259] font-medium">Students falling below exam eligibility criteria</p>
         </div>
 
         <div className="warm-card p-5 space-y-2">
-          <span className="text-xs font-bold text-[#706259] font-ethiopic">የቀጥታ ክፍለ-ጊዜያት</span>
+          <span className="text-xs font-bold text-[#706259]">Active Lecture Sessions</span>
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-black text-[#B8860B] tracking-tight">1</span>
-            <span className="text-xs font-bold text-[#B8860B] bg-[#FBF2DE] px-2.5 py-0.5 rounded-lg border border-[#B8860B]/30 font-ethiopic">
+            <span className="text-xs font-bold text-[#B8860B] bg-[#FBF2DE] px-2.5 py-0.5 rounded-lg border border-[#B8860B]/30">
               SEng3112 Live
             </span>
           </div>
-          <p className="text-[11px] text-[#706259] font-medium font-ethiopic">Dynamic 15s QR + በእጅ መመዝገቢያ ክፍት ነው</p>
+          <p className="text-[11px] text-[#706259] font-medium">Dynamic 15s QR + In-class manual mark cap active</p>
         </div>
 
         <div className="warm-card p-5 space-y-2">
-          <span className="text-xs font-bold text-[#706259] font-ethiopic">አጠቃላይ ተማሪዎች</span>
+          <span className="text-xs font-bold text-[#706259]">Total Whitelisted Students</span>
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-black text-[#2C221E] tracking-tight">149</span>
             <span className="text-xs font-bold text-[#706259] bg-[#F4EFE6] px-2.5 py-0.5 rounded-lg border border-[#EADBCE]">
-              ዓመት 1–5
+              Batches 1–5
             </span>
           </div>
-          <p className="text-[11px] text-[#1E7E53] font-bold flex items-center gap-1 font-ethiopic">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#1E7E53]" /> 100% በቴሌግራም የተረጋገጡ
+          <p className="text-[11px] text-[#1E7E53] font-bold flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#1E7E53]" /> 100% Telegram Bound
           </p>
         </div>
       </section>
@@ -514,10 +593,10 @@ export default function DepartmentHeadDashboard() {
       {/* 5-BATCH COHORT HEALTH MATRIX (Years 1 to 5) */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-black text-[#706259] uppercase tracking-wider font-ethiopic">
-            የ 5ቱ ዓመታት የባች ሁኔታ • Cohort Overview (ሴሚስተር {selectedSemester})
+          <h2 className="text-xs font-black text-[#706259] uppercase tracking-wider">
+            5-Year Batch Cohort Matrix • Semester {selectedSemester} Overview
           </h2>
-          <span className="text-xs text-[#706259] font-medium font-ethiopic">ባቾቹን በመንካት ዝርዝሩን ይመልከቱ</span>
+          <span className="text-xs text-[#706259] font-medium">Click batch cards to filter table</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -556,9 +635,9 @@ export default function DepartmentHeadDashboard() {
               </div>
 
               <div className="flex items-center justify-between text-[11px] text-[#706259] font-medium">
-                <span>{b.total} ተማሪዎች</span>
+                <span>{b.total} Students</span>
                 <span className={b.atRisk > 0 ? "text-[#B83833] font-bold" : "text-[#706259]"}>
-                  {b.atRisk} የቀሩ
+                  {b.atRisk} At Risk
                 </span>
               </div>
             </div>
@@ -570,36 +649,47 @@ export default function DepartmentHeadDashboard() {
       <div className="flex flex-wrap items-center gap-2 border-b border-[#EADBCE] pb-3">
         <button
           onClick={() => setActiveTab("atRisk")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all font-ethiopic ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === "atRisk"
               ? "bg-[#B83833] text-white shadow-md"
               : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
           }`}
         >
           <AlertTriangle className="w-4 h-4" />
-          🚨 አስቸኳይ ማስጠንቀቂያ ማዕከል ({atRiskStudents.length})
+          Critical At-Risk Center ({atRiskStudents.length})
+        </button>
+        <button
+          onClick={() => setActiveTab("facultyCompliance")}
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+            activeTab === "facultyCompliance"
+              ? "btn-ochre shadow-md"
+              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
+          }`}
+        >
+          <Clock className="w-4 h-4" />
+          Faculty Daily Compliance Monitor
         </button>
         <button
           onClick={() => setActiveTab("roster")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all font-ethiopic ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === "roster"
               ? "btn-ochre shadow-md"
               : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
           }`}
         >
           <Users className="w-4 h-4" />
-          ሙሉ የተማሪዎች መዝገብና ፈቃድ
+          Master Student Roster & Excuses
         </button>
         <button
           onClick={() => setActiveTab("upload")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all font-ethiopic ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === "upload"
               ? "btn-ochre shadow-md"
               : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
           }`}
         >
           <Upload className="w-4 h-4" />
-          ተማሪዎችን በ Drag & Drop ማስገቢያ (Excel / CSV)
+          Drag & Drop Whitelist Ingestion (Excel/CSV)
         </button>
       </div>
 
@@ -608,19 +698,19 @@ export default function DepartmentHeadDashboard() {
         <section className="space-y-4">
           <div className="p-5 rounded-3xl bg-[#FAEAE9] border border-[#F8D7DA] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
             <div className="space-y-1">
-              <h3 className="text-sm font-black text-[#B83833] flex items-center gap-2 font-ethiopic">
+              <h3 className="text-sm font-black text-[#B83833] flex items-center gap-2">
                 <AlertOctagon className="w-5 h-5 text-[#B83833]" />
-                አስቸኳይ ክትትል የሚሹ ተማሪዎች (ከ 75% በታች የቀሩ)
+                Students At Risk of Examination Bar (&lt; 75% Attendance)
               </h3>
-              <p className="text-xs text-[#706259] font-ethiopic">
-                በቀጥታ ወደ ተማሪው ስልክ በመደወል ማነጋገር ወይም በቴሌግራም ቦት ይፋዊ የዲፓርትመንት ማስጠንቀቂያ መላክ ይችላሉ።
+              <p className="text-xs text-[#706259]">
+                Intervene directly via phone call or dispatch official Telegram warnings backed by institutional records.
               </p>
             </div>
             <button
               onClick={() => setIsBroadcastModalOpen(true)}
-              className="px-4 py-2.5 bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs rounded-xl shadow-md transition-all shrink-0 font-ethiopic"
+              className="px-4 py-2.5 bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs rounded-xl shadow-md transition-all shrink-0"
             >
-              ለሁሉም {atRiskStudents.length} ተማሪዎች ማስጠንቀቂያ ላክ
+              Broadcast Warning to All {atRiskStudents.length} Students
             </button>
           </div>
 
@@ -628,12 +718,12 @@ export default function DepartmentHeadDashboard() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
                 <tr>
-                  <th className="py-3.5 px-4 font-ethiopic">ተማሪ (Student)</th>
-                  <th className="py-3.5 px-4">የተማሪ መታወቂያ & ባች</th>
-                  <th className="py-3.5 px-4">የቴሌግራም ስልክ ቁጥር</th>
-                  <th className="py-3.5 px-4">የአቴንዳንስ ምጣኔ</th>
-                  <th className="py-3.5 px-4">የመጨረሻ ሁኔታ</th>
-                  <th className="py-3.5 px-4 text-right font-ethiopic">ቀጥታ እርምጃዎች</th>
+                  <th className="py-3.5 px-4">Student</th>
+                  <th className="py-3.5 px-4">Student ID & Cohort</th>
+                  <th className="py-3.5 px-4">Telegram Bound Phone</th>
+                  <th className="py-3.5 px-4">Attendance Rate</th>
+                  <th className="py-3.5 px-4">Last Status</th>
+                  <th className="py-3.5 px-4 text-right">Intervention Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EADBCE]">
@@ -660,7 +750,7 @@ export default function DepartmentHeadDashboard() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-black text-[#B83833]">{s.attendanceRate}%</span>
                         <span className="text-[10px] font-black text-[#B83833] bg-[#FAEAE9] px-2 py-0.5 rounded-md border border-[#F8D7DA]">
-                          አስቸኳይ (RISK)
+                          CRITICAL RISK
                         </span>
                       </div>
                     </td>
@@ -674,21 +764,21 @@ export default function DepartmentHeadDashboard() {
                         {/* 1. Direct Phone Call Button */}
                         <a
                           href={`tel:${s.phoneNumber}`}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E8F3EE] hover:bg-[#C2E8CA] text-[#1E7E53] border border-[#C2E8CA] font-bold text-xs transition-colors font-ethiopic"
-                          title="በስልክ ደውለው ያነጋግሩ"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E8F3EE] hover:bg-[#C2E8CA] text-[#1E7E53] border border-[#C2E8CA] font-bold text-xs transition-colors"
+                          title="Call student phone"
                         >
                           <Phone className="w-3.5 h-3.5" />
-                          ደውል
+                          Call
                         </a>
 
                         {/* 2. Direct Telegram Warning Button */}
                         <button
                           disabled={alertingStudentId === s.id}
                           onClick={() => handleSendTelegramWarning(s)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50 font-ethiopic"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50"
                         >
                           <Send className="w-3.5 h-3.5" />
-                          {alertingStudentId === s.id ? "እየላከ ነው..." : "ማስጠንቀቂያ ላክ"}
+                          {alertingStudentId === s.id ? "Sending..." : "Send Warning"}
                         </button>
                       </div>
                     </td>
@@ -700,7 +790,86 @@ export default function DepartmentHeadDashboard() {
         </section>
       )}
 
-      {/* TAB 2: FULL ATTENDANCE ROSTER & EXCUSE LOG */}
+      {/* TAB 2: FACULTY DAILY COMPLIANCE MONITOR */}
+      {activeTab === "facultyCompliance" && (
+        <section className="space-y-4">
+          <div className="p-5 rounded-3xl bg-[#FBF2DE] border border-[#B8860B]/30 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+            <div className="space-y-1">
+              <h3 className="text-sm font-black text-[#2C221E] flex items-center gap-2">
+                <Clock className="w-5 h-5 text-[#B8860B]" />
+                Daily Lecture Attendance Compliance Log (Today's Scheduled Classes)
+              </h3>
+              <p className="text-xs text-[#706259]">
+                Verify whether instructors have launched attendance sessions and logged student turnout for their assigned lecture slots.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-3 py-1.5 rounded-xl border border-[#C2E8CA]">
+              <CheckCircle2 className="w-4 h-4" /> 2 of 4 Sessions Completed Today
+            </div>
+          </div>
+
+          <div className="overflow-x-auto rounded-3xl border border-[#EADBCE] bg-[#FFFFFF] shadow-sm">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
+                <tr>
+                  <th className="py-3 px-4">Instructor Name</th>
+                  <th className="py-3 px-4">Course & Code</th>
+                  <th className="py-3 px-4">Batch Cohort</th>
+                  <th className="py-3 px-4">Scheduled Slot</th>
+                  <th className="py-3 px-4">Session Status</th>
+                  <th className="py-3 px-4">Turnout / Registered</th>
+                  <th className="py-3 px-4 text-right">Compliance Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#EADBCE]">
+                {facultyComplianceData.map((f, i) => (
+                  <tr key={i} className="hover:bg-[#F9F6F0] transition-colors">
+                    <td className="py-3 px-4 font-bold text-[#2C221E]">{f.facultyName}</td>
+                    <td className="py-3 px-4">
+                      <span className="font-mono font-bold text-[#B8860B] mr-1.5">{f.courseCode}</span>
+                      <span className="text-[#706259]">{f.courseTitle}</span>
+                    </td>
+                    <td className="py-3 px-4 font-bold text-[#2C221E]">Year {f.batchYear}</td>
+                    <td className="py-3 px-4 font-mono text-[#706259]">{f.scheduledTime}</td>
+                    <td className="py-3 px-4">
+                      {f.sessionStatus === "LIVE" ? (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#E8F3EE] text-[#1E7E53] border border-[#C2E8CA] flex items-center gap-1.5 w-fit">
+                          <span className="w-2 h-2 rounded-full bg-[#1E7E53] animate-pulse" />
+                          Session Live
+                        </span>
+                      ) : f.sessionStatus === "COMPLETED" ? (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#F4EFE6] text-[#706259] border border-[#EADBCE] w-fit">
+                          Completed
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FAEAE9] text-[#B83833] border border-[#F8D7DA] w-fit">
+                          Pending Start
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 font-mono font-bold text-[#2C221E]">
+                      {f.markedStudents} / {f.totalEnrolled}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      {f.attendanceTaken ? (
+                        <span className="text-xs font-bold text-[#1E7E53] flex items-center justify-end gap-1">
+                          <CheckCircle2 className="w-4 h-4" /> Compliant
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-[#B83833] flex items-center justify-end gap-1">
+                          <Clock className="w-4 h-4" /> Not Initiated
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* TAB 3: FULL ATTENDANCE ROSTER & EXCUSE LOG */}
       {activeTab === "roster" && (
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -708,7 +877,7 @@ export default function DepartmentHeadDashboard() {
               <Search className="w-4 h-4 text-[#706259] absolute left-3.5 top-3" />
               <input
                 type="text"
-                placeholder="በስም፣ በ ID ወይም በስልክ ፈልግ..."
+                placeholder="Search student by name, ID or phone..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl pl-10 pr-4 py-2 text-xs text-[#2C221E] placeholder-[#A6978A] focus:outline-none focus:border-[#B8860B] shadow-sm font-medium"
@@ -716,7 +885,7 @@ export default function DepartmentHeadDashboard() {
             </div>
 
             <div className="flex items-center gap-2 self-end sm:self-auto">
-              <span className="text-xs text-[#706259] font-bold font-ethiopic">የባች ማጣሪያ:</span>
+              <span className="text-xs text-[#706259] font-bold">Filter Batch:</span>
               <select
                 value={selectedBatchFilter}
                 onChange={(e) =>
@@ -726,7 +895,7 @@ export default function DepartmentHeadDashboard() {
                 }
                 className="bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-1.5 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B] shadow-sm"
               >
-                <option value="ALL">ሁሉም ባቾች (Years 1–5)</option>
+                <option value="ALL">All Cohorts (Years 1–5)</option>
                 <option value={1}>Year 1 (Freshman)</option>
                 <option value={2}>Year 2 (Sophomore)</option>
                 <option value={3}>Year 3 (Junior)</option>
@@ -740,13 +909,13 @@ export default function DepartmentHeadDashboard() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
                 <tr>
-                  <th className="py-3 px-4 font-ethiopic">ተማሪ (Student)</th>
-                  <th className="py-3 px-4">የተማሪ መታወቂያ</th>
-                  <th className="py-3 px-4">ባች</th>
-                  <th className="py-3 px-4">የቴሌግራም ስልክ ቁጥር</th>
-                  <th className="py-3 px-4">የቅርብ ሁኔታ</th>
-                  <th className="py-3 px-4">የአቴንዳንስ ምጣኔ</th>
-                  <th className="py-3 px-4 text-right font-ethiopic">የፈቃድ ማስተካከያ</th>
+                  <th className="py-3 px-4">Student</th>
+                  <th className="py-3 px-4">Student ID</th>
+                  <th className="py-3 px-4">Batch</th>
+                  <th className="py-3 px-4">Telegram Phone</th>
+                  <th className="py-3 px-4">Recent Status</th>
+                  <th className="py-3 px-4">Attendance Rate</th>
+                  <th className="py-3 px-4 text-right">Head Excuse Override</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EADBCE]">
@@ -791,12 +960,12 @@ export default function DepartmentHeadDashboard() {
                       {s.status === "ABSENT" ? (
                         <button
                           onClick={() => setSelectedRecordForExcuse(s)}
-                          className="px-3 py-1 bg-[#FBF2DE] hover:bg-[#B8860B] hover:text-white text-[#B8860B] border border-[#B8860B]/30 rounded-xl text-xs font-bold transition-all font-ethiopic"
+                          className="px-3 py-1 bg-[#FBF2DE] hover:bg-[#B8860B] hover:text-white text-[#B8860B] border border-[#B8860B]/30 rounded-xl text-xs font-bold transition-all"
                         >
-                          ፈቃድ መዝግብ (Excuse)
+                          Excuse Absence
                         </button>
                       ) : (
-                        <span className="text-[#A6978A] text-[11px] font-medium font-ethiopic">የጸደቀ (Reconciled)</span>
+                        <span className="text-[#A6978A] text-[11px] font-medium">Reconciled</span>
                       )}
                     </td>
                   </tr>
@@ -807,16 +976,16 @@ export default function DepartmentHeadDashboard() {
         </section>
       )}
 
-      {/* TAB 3: DRAG & DROP ROSTER INGESTION */}
+      {/* TAB 4: DRAG & DROP ROSTER INGESTION */}
       {activeTab === "upload" && (
         <section className="space-y-6">
           <div className="space-y-1">
-            <h2 className="text-sm font-black text-[#2C221E] flex items-center gap-2 font-ethiopic">
+            <h2 className="text-sm font-black text-[#2C221E] flex items-center gap-2">
               <Upload className="w-4 h-4 text-[#B8860B]" />
-              የተማሪዎች መዝገብ ፋይል ጎትቶ ማስገቢያ (Drag & Drop Whitelist)
+              Roster Whitelist Ingestion (Excel & CSV Drag & Drop)
             </h2>
-            <p className="text-xs text-[#706259] font-ethiopic">
-              የክፍል ተማሪዎች መዝገብ ፋይሎችን (.csv, .xlsx, .xls) ያስገቡ። የቴሌግራም ስልክ ቁጥራቸው ወዲያውኑ ይረጋገጣል (Validate ይደረጋል)።
+            <p className="text-xs text-[#706259]">
+              Upload batch class rosters (.csv, .xlsx). Phone numbers are automatically verified and bound to students' Telegram identities.
             </p>
           </div>
 
@@ -846,8 +1015,8 @@ export default function DepartmentHeadDashboard() {
               <FileSpreadsheet className="w-7 h-7" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-bold text-[#2C221E] font-ethiopic">
-                {uploadFileName ? `የተመረጠ ፋይል: ${uploadFileName}` : "የተማሪዎችን Excel / CSV ፋይል እዚህ ይጎትቱ ወይም ይጫኑ"}
+              <p className="text-sm font-bold text-[#2C221E]">
+                {uploadFileName ? `Selected File: ${uploadFileName}` : "Drag & drop roster spreadsheet here, or click to browse"}
               </p>
               <p className="text-xs text-[#706259]">
                 Supports Microsoft Excel (.xlsx, .xls) and Comma-Separated Values (.csv)
@@ -855,9 +1024,9 @@ export default function DepartmentHeadDashboard() {
             </div>
             <button
               type="button"
-              className="px-4 py-2 bg-[#F4EFE6] hover:bg-[#EADBCE] text-[#2C221E] font-bold text-xs rounded-xl transition-colors font-ethiopic"
+              className="px-4 py-2 bg-[#F4EFE6] hover:bg-[#EADBCE] text-[#2C221E] font-bold text-xs rounded-xl transition-colors"
             >
-              ከኮምፒውተር ይምረጡ (Browse File)
+              Browse Files from Computer
             </button>
           </div>
 
@@ -866,8 +1035,8 @@ export default function DepartmentHeadDashboard() {
             <div
               className={`p-4 rounded-2xl border text-xs font-semibold ${
                 uploadMessage.type === "success"
-                  ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-300"
-                  : "bg-rose-950/40 border-rose-500/30 text-rose-300"
+                  ? "bg-[#E8F3EE] border-[#C2E8CA] text-[#1E7E53]"
+                  : "bg-[#FAEAE9] border-[#F8D7DA] text-[#B83833]"
               }`}
             >
               {uploadMessage.text}
@@ -878,15 +1047,15 @@ export default function DepartmentHeadDashboard() {
           {parsedUploadRows.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-[#706259] uppercase tracking-wider font-ethiopic">
-                  የተማሪዎች መዝገብ ቅድመ-ዕይታ ({parsedUploadRows.length} ተማሪዎች ተገኝተዋል)
+                <h3 className="text-xs font-bold text-[#706259] uppercase tracking-wider">
+                  Roster Whitelist Preview ({parsedUploadRows.length} Students Parsed)
                 </h3>
                 <button
                   disabled={isSubmittingUpload}
                   onClick={handleCommitUpload}
-                  className="px-5 py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50 font-ethiopic"
+                  className="px-5 py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50"
                 >
-                  {isSubmittingUpload ? "በማመሳሰል ላይ ነው..." : "አረጋግጥና መዝገቡን አመሳስል"}
+                  {isSubmittingUpload ? "Synchronizing..." : "Confirm & Whitelist Roster"}
                 </button>
               </div>
 
@@ -894,12 +1063,12 @@ export default function DepartmentHeadDashboard() {
                 <table className="w-full text-left text-xs">
                   <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
                     <tr>
-                      <th className="py-2.5 px-4 font-ethiopic">ሙሉ ስም</th>
-                      <th className="py-2.5 px-4">የተማሪ መታወቂያ</th>
-                      <th className="py-2.5 px-4">የቴሌግራም ስልክ ቁጥር</th>
-                      <th className="py-2.5 px-4">ባች</th>
-                      <th className="py-2.5 px-4">ሴሚስተር</th>
-                      <th className="py-2.5 px-4 text-right font-ethiopic">የቁጥር ትክክለኛነት</th>
+                      <th className="py-2.5 px-4">Full Name</th>
+                      <th className="py-2.5 px-4">Student ID</th>
+                      <th className="py-2.5 px-4">Telegram Phone</th>
+                      <th className="py-2.5 px-4">Batch</th>
+                      <th className="py-2.5 px-4">Semester</th>
+                      <th className="py-2.5 px-4 text-right">E.164 Validation</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#EADBCE] font-mono">
@@ -915,11 +1084,11 @@ export default function DepartmentHeadDashboard() {
                         <td className="py-2.5 px-4 text-right font-sans">
                           {row.isValidPhone ? (
                             <span className="text-[10px] font-bold text-[#1E7E53] bg-[#E8F3EE] px-2 py-0.5 rounded-md border border-[#C2E8CA]">
-                              ትክክለኛ E.164
+                              Valid E.164
                             </span>
                           ) : (
                             <span className="text-[10px] font-bold text-[#B8860B] bg-[#FBF2DE] px-2 py-0.5 rounded-md border border-[#B8860B]/30">
-                              ቅርጹን ይፈትሹ
+                              Verify Format
                             </span>
                           )}
                         </td>
@@ -929,8 +1098,8 @@ export default function DepartmentHeadDashboard() {
                 </table>
               </div>
               {parsedUploadRows.length > 8 && (
-                <p className="text-[11px] text-[#706259] text-center font-medium font-ethiopic">
-                  ከ {parsedUploadRows.length} ተማሪዎች ውስጥ 8ቱ እየታዩ ነው...
+                <p className="text-[11px] text-[#706259] text-center font-medium">
+                  Showing 8 of {parsedUploadRows.length} parsed records...
                 </p>
               )}
             </div>
@@ -944,12 +1113,12 @@ export default function DepartmentHeadDashboard() {
           <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-2xl max-w-lg w-full space-y-5 animate-in fade-in-50 zoom-in-95">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
-                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2 font-ethiopic">
+                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2">
                   <AlertOctagon className="w-5 h-5 text-[#B83833]" />
-                  አስቸኳይ የቴሌግራም ማስጠንቀቂያ መላኪያ
+                  Broadcast Telegram Attendance Warning
                 </h3>
-                <p className="text-xs text-[#706259] font-ethiopic">
-                  ከ 75% በታች ለቀሩ የባቹ ተማሪዎች በሙሉ በቴሌግራም ቦት በቀጥታ ይላካል።
+                <p className="text-xs text-[#706259]">
+                  Send official warning messages via the Telegram Bot to all students below 75% attendance.
                 </p>
               </div>
               <button
@@ -961,7 +1130,7 @@ export default function DepartmentHeadDashboard() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-[#706259] font-ethiopic">የተማሪዎች ባች ይምረጡ</label>
+              <label className="text-xs font-bold text-[#706259]">Target Cohort / Batch</label>
               <select
                 value={broadcastTargetBatch}
                 onChange={(e) => setBroadcastTargetBatch(Number(e.target.value))}
@@ -969,14 +1138,14 @@ export default function DepartmentHeadDashboard() {
               >
                 <option value={1}>Year 1 (Freshman)</option>
                 <option value={2}>Year 2 (Sophomore)</option>
-                <option value={3}>Year 3 (Junior - 3 የቀሩ ተማሪዎች)</option>
+                <option value={3}>Year 3 (Junior - 3 Students at Risk)</option>
                 <option value={4}>Year 4 (Senior)</option>
-                <option value={5}>Year 5 (Finalists - 5 የቀሩ ተማሪዎች)</option>
+                <option value={5}>Year 5 (Finalists - 5 Students at Risk)</option>
               </select>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#706259] font-ethiopic">የማስጠንቀቂያ መልዕክት</label>
+              <label className="text-xs font-bold text-[#706259]">Warning Message Content</label>
               <textarea
                 rows={4}
                 value={customBroadcastMessage}
@@ -990,14 +1159,14 @@ export default function DepartmentHeadDashboard() {
                 onClick={() => setIsBroadcastModalOpen(false)}
                 className="px-4 py-2 text-xs font-bold text-[#706259] hover:text-[#2C221E]"
               >
-                ሰርዝ (Cancel)
+                Cancel
               </button>
               <button
                 disabled={isSendingBroadcast}
                 onClick={handleBroadcastBatchWarning}
-                className="px-4 py-2.5 bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50 font-ethiopic"
+                className="px-4 py-2.5 bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50"
               >
-                {isSendingBroadcast ? "በመላክ ላይ ነው..." : "ማስጠንቀቂያውን አሁን ላክ"}
+                {isSendingBroadcast ? "Dispatching..." : "Send Telegram Warning Now"}
               </button>
             </div>
           </div>
@@ -1010,12 +1179,12 @@ export default function DepartmentHeadDashboard() {
           <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-2xl max-w-lg w-full space-y-5 animate-in fade-in-50 zoom-in-95">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
-                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2 font-ethiopic">
+                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2">
                   <FileCheck className="w-5 h-5 text-[#B8860B]" />
-                  የቀረበትን ምክንያት ማስተካከያና ፈቃድ መዝገብ (Excuse Override)
+                  Absence Excuse & Documentation Reconciliation
                 </h3>
-                <p className="text-xs text-[#706259] font-ethiopic">
-                  ያልተረጋገጠ የቀረበትን ሁኔታ በህክምና ወይም ይፋዊ ማስረጃ ወደ EXCUSED ይቀይሩ።
+                <p className="text-xs text-[#706259]">
+                  Reconcile unverified absence to EXCUSED upon presentation of university clinic or dean approval.
                 </p>
               </div>
               <button
@@ -1028,23 +1197,23 @@ export default function DepartmentHeadDashboard() {
 
             <div className="bg-[#FBF2DE] p-4 rounded-2xl border border-[#B8860B]/30 space-y-1 text-xs">
               <p>
-                <strong className="text-[#706259] font-ethiopic">ተማሪ:</strong>{" "}
+                <strong className="text-[#706259]">Student:</strong>{" "}
                 <span className="text-[#2C221E] font-black">{selectedRecordForExcuse.name}</span> (
                 {selectedRecordForExcuse.studentId})
               </p>
               <p>
-                <strong className="text-[#706259] font-ethiopic">ስልክ:</strong>{" "}
+                <strong className="text-[#706259]">Telegram Phone:</strong>{" "}
                 <span className="text-[#2C221E] font-mono font-bold">{selectedRecordForExcuse.phoneNumber}</span>
               </p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#706259] font-ethiopic">
-                የይፋዊ ማስረጃ ማብራሪያ (Excuse Reason) <span className="text-[#B83833]">*</span>
+              <label className="text-xs font-bold text-[#706259]">
+                Official Documentation Reference / Reason <span className="text-[#B83833]">*</span>
               </label>
               <textarea
                 rows={3}
-                placeholder="ምሳሌ: ከዩኒቨርሲቲው ተማሪዎች ክሊኒክ የተሰጠ የህክምና ማስረጃ ተረጋግጧል (Ref: MED-2026-904)..."
+                placeholder="e.g., Verified medical certificate issued by Injibara University Student Clinic (Ref: INJ-MED-2026-104)..."
                 value={excuseNote}
                 onChange={(e) => setExcuseNote(e.target.value)}
                 className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl p-3 text-xs text-[#2C221E] focus:outline-none focus:border-[#B8860B] placeholder-[#A6978A]"
@@ -1052,7 +1221,7 @@ export default function DepartmentHeadDashboard() {
             </div>
 
             {excuseNotification && (
-              <p className="text-xs text-[#1E7E53] font-bold p-2.5 bg-[#E8F3EE] rounded-xl border border-[#C2E8CA] font-ethiopic">
+              <p className="text-xs text-[#1E7E53] font-bold p-2.5 bg-[#E8F3EE] rounded-xl border border-[#C2E8CA]">
                 {excuseNotification}
               </p>
             )}
@@ -1062,14 +1231,14 @@ export default function DepartmentHeadDashboard() {
                 onClick={() => setSelectedRecordForExcuse(null)}
                 className="px-4 py-2 text-xs font-bold text-[#706259] hover:text-[#2C221E]"
               >
-                ተመለስ (Cancel)
+                Cancel
               </button>
               <button
                 disabled={isSubmittingExcuse || excuseNote.trim().length < 5}
                 onClick={handleSubmitExcuse}
-                className="px-4 py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50 font-ethiopic"
+                className="px-4 py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50"
               >
-                {isSubmittingExcuse ? "በመመዝገብ ላይ..." : "አጽድቅና ፈቃድ መዝግብ (Confirm Excuse)"}
+                {isSubmittingExcuse ? "Submitting..." : "Approve & Mark Excused"}
               </button>
             </div>
           </div>

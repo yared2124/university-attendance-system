@@ -130,8 +130,16 @@ export default function InstructorSessionPresenter({
     return () => clearInterval(timer);
   }, []);
 
-  // Handle In-Class Manual Mark for a student
+  // Handle In-Class Manual Mark for a student with Strict Cap of 5
+  const MAX_MANUAL_CAP = 5;
+  const manualCount = recentCheckIns.filter((r) => r.isManual).length;
+
   const handleManualMark = async (student: { id: string; name: string; studentId: string }) => {
+    if (manualCount >= MAX_MANUAL_CAP) {
+      setManualSuccessMsg(`⛔ Quota Exceeded: Maximum ${MAX_MANUAL_CAP} manual check-ins allowed per session. Additional absentees must present official excuse documentation to the Department Head.`);
+      return;
+    }
+
     setIsSubmittingManual(true);
     setManualSuccessMsg(null);
 
@@ -149,7 +157,7 @@ export default function InstructorSessionPresenter({
 
       const data = await res.json();
       if (res.ok) {
-        setManualSuccessMsg(`✅ ${student.name} marked PRESENT.`);
+        setManualSuccessMsg(`✅ ${student.name} marked PRESENT manually (${manualCount + 1}/${MAX_MANUAL_CAP} quota used).`);
         setCheckedInCount((prev) => prev + 1);
         setRecentCheckIns((prev) => [
           {
@@ -161,7 +169,7 @@ export default function InstructorSessionPresenter({
           },
           ...prev,
         ]);
-        setTimeout(() => setManualSuccessMsg(null), 2500);
+        setTimeout(() => setManualSuccessMsg(null), 3000);
       }
     } catch (err) {
       console.error(err);
@@ -229,14 +237,14 @@ export default function InstructorSessionPresenter({
           <div>
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30">
-                SEng3112 • ሴሚስተር 1
+                SEng3112 • Semester 1
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-[#E8F3EE] text-[#1E7E53] border border-[#C2E8CA]">
                 <span className="w-2 h-2 rounded-full bg-[#1E7E53] animate-pulse" />
-                የቀጥታ ክፍል ክፍለ-ጊዜ (Live Session)
+                Live Attendance Session (Injibara University)
               </span>
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-[#2C221E] mt-1 font-ethiopic">
+            <h1 className="text-xl font-bold tracking-tight text-[#2C221E] mt-1">
               Software Requirements Engineering (Year 3)
             </h1>
           </div>
@@ -244,13 +252,13 @@ export default function InstructorSessionPresenter({
 
         {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-3">
-          {/* Manual Check-in Trigger */}
+          {/* Manual Check-in Trigger with 5-student Cap */}
           <button
             onClick={() => setIsManualModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all font-ethiopic"
+            className="flex items-center gap-2 px-4 py-2 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all"
           >
             <UserPlus className="w-4 h-4 text-[#B8860B]" />
-            ስልክ የሌላቸውን ተማሪዎች መዝግብ (Manual)
+            Manual Check-in ({manualCount}/5 Used)
           </button>
 
           {/* Mode Switcher */}
@@ -291,10 +299,10 @@ export default function InstructorSessionPresenter({
             <button
               disabled={isClosing}
               onClick={handleCloseSession}
-              className="flex items-center gap-2 px-4 py-2 bg-[#FAEAE9] hover:bg-[#F8D7DA] text-[#B83833] border border-[#F8D7DA] font-bold text-xs rounded-xl shadow-sm transition-all disabled:opacity-50 font-ethiopic"
+              className="flex items-center gap-2 px-4 py-2 bg-[#FAEAE9] hover:bg-[#F8D7DA] text-[#B83833] border border-[#F8D7DA] font-bold text-xs rounded-xl shadow-sm transition-all disabled:opacity-50"
             >
               <Square className="w-3.5 h-3.5 fill-current" />
-              {isClosing ? "እየተዘጋ ነው..." : "ክፍለ-ጊዜውን ዝጋ"}
+              {isClosing ? "Terminating..." : "Terminate Session"}
             </button>
           )}
         </div>
@@ -307,27 +315,27 @@ export default function InstructorSessionPresenter({
           {isClosed ? (
             <div className="p-10 rounded-3xl warm-card max-w-md w-full space-y-4 text-center">
               <CheckCircle2 className="w-14 h-14 text-[#1E7E53] mx-auto" />
-              <h2 className="text-xl font-bold text-[#2C221E] font-ethiopic">ክፍለ-ጊዜው ተጠናቋል</h2>
+              <h2 className="text-xl font-bold text-[#2C221E]">Attendance Finalized</h2>
               <p className="text-xs text-[#706259]">
                 The session has been terminated. Cohort absences have been materialized into PostgreSQL.
               </p>
               {closedSummary && (
                 <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[#EADBCE]">
                   <div className="bg-[#E8F3EE] border border-[#C2E8CA] p-3 rounded-2xl">
-                    <p className="text-xs text-[#1E7E53] font-bold">የተገኙ (Present)</p>
+                    <p className="text-xs text-[#1E7E53] font-bold">Present</p>
                     <p className="text-2xl font-black text-[#1E7E53]">{closedSummary.presentCount}</p>
                   </div>
                   <div className="bg-[#FAEAE9] border border-[#F8D7DA] p-3 rounded-2xl">
-                    <p className="text-xs text-[#B83833] font-bold">የቀሩ (Absent)</p>
+                    <p className="text-xs text-[#B83833] font-bold">Absent (Unexcused)</p>
                     <p className="text-2xl font-black text-[#B83833]">{closedSummary.absentCount}</p>
                   </div>
                 </div>
               )}
               <Link
                 href="/instructor"
-                className="inline-block mt-3 w-full py-3 px-4 btn-ochre text-xs font-bold rounded-xl shadow-md transition-all font-ethiopic"
+                className="inline-block mt-3 w-full py-3 px-4 btn-ochre text-xs font-bold rounded-xl shadow-md transition-all"
               >
-                ወደ መምህራን ገጽ ተመለስ
+                Return to Course Deck
               </Link>
             </div>
           ) : mode === "DYNAMIC_QR" ? (
@@ -368,8 +376,8 @@ export default function InstructorSessionPresenter({
               </div>
 
               <div className="space-y-1">
-                <p className="text-sm font-black text-[#2C221E] font-ethiopic">
-                  በቴሌግራም ሚኒ አፕ ስካን ያድርጉ (Scan via Mini App)
+                <p className="text-sm font-black text-[#2C221E]">
+                  Scan via Telegram Mini App
                 </p>
                 <p className="text-xs text-[#706259]">
                   QR seed rotates every 15s. Forwarded screenshots will fail automatically.
@@ -381,7 +389,7 @@ export default function InstructorSessionPresenter({
             <div className="p-8 rounded-3xl warm-card border-2 border-[#B8860B] max-w-lg w-full space-y-5">
               <div className="flex items-center justify-center gap-2 text-[#B8860B] font-bold text-xs uppercase tracking-wider bg-[#FBF2DE] py-1.5 px-3 rounded-full w-fit mx-auto border border-[#B8860B]/30">
                 <AlertTriangle className="w-4 h-4" />
-                የመብራት ወይም የኔትወርክ መቋረጥ ጊዜ ማሳያ (Outage Fallback)
+                Power Outage / Classroom Offline Mode
               </div>
 
               <div className="space-y-2">
@@ -396,7 +404,7 @@ export default function InstructorSessionPresenter({
               </div>
 
               <div className="flex items-center justify-center gap-4 text-[#706259] text-xs">
-                <span>በየ 20 ሰከንዱ ይቀያየራል</span>
+                <span>Cycles every 20 seconds</span>
                 <span>•</span>
                 <span className="text-[#B8860B] font-bold">
                   Next code in <strong className="text-[#2C221E]">{secondsRemaining}s</strong>
@@ -410,9 +418,9 @@ export default function InstructorSessionPresenter({
         <div className="lg:col-span-4 p-5 rounded-3xl warm-card space-y-4 h-[480px] flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-[#EADBCE]">
-              <h3 className="text-xs font-bold text-[#2C221E] uppercase tracking-wider flex items-center gap-2 font-ethiopic">
+              <h3 className="text-xs font-bold text-[#2C221E] uppercase tracking-wider flex items-center gap-2">
                 <Users className="w-4 h-4 text-[#B8860B]" />
-                የቀጥታ የተማሪዎች መግቢያ (Live Feed)
+                Live Attendance Feed
               </h3>
               <span className="text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA]">
                 {checkedInCount} / {totalCohort} ({attendanceRate}%)
@@ -432,7 +440,7 @@ export default function InstructorSessionPresenter({
             {recentCheckIns.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center text-[#706259] space-y-2">
                 <Clock className="w-7 h-7 opacity-40 animate-spin text-[#B8860B]" />
-                <p className="text-xs font-ethiopic">ተማሪዎች እስኪመዘገቡ ድረስ እየጠበቀ ነው...</p>
+                <p className="text-xs">Awaiting student check-ins...</p>
               </div>
             ) : (
               recentCheckIns.map((rec, i) => (
@@ -447,7 +455,7 @@ export default function InstructorSessionPresenter({
                         {rec.fullName}
                         {rec.isManual && (
                           <span className="text-[10px] font-bold text-[#B8860B] bg-[#FBF2DE] px-1.5 py-0.5 rounded-md border border-[#B8860B]/30">
-                            በእጅ (Manual)
+                            Manual
                           </span>
                         )}
                       </p>
@@ -467,23 +475,28 @@ export default function InstructorSessionPresenter({
           </div>
 
           <div className="pt-2 border-t border-[#EADBCE] text-[11px] text-center text-[#706259] font-medium">
-            Atomic Real-time Sync • Powered by AAU SEng
+            Atomic Real-time Sync • Injibara University SEng
           </div>
         </div>
       </main>
 
-      {/* MANUAL IN-CLASS REGISTRATION MODAL */}
+      {/* MANUAL IN-CLASS REGISTRATION MODAL WITH STRICT CAP OF 5 */}
       {isManualModalOpen && (
         <div className="fixed inset-0 bg-[#2C221E]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-2xl max-w-md w-full space-y-4 animate-in fade-in zoom-in-95">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
-                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2 font-ethiopic">
-                  <UserPlus className="w-5 h-5 text-[#B8860B]" />
-                  በክፍል ውስጥ በእጅ መመዝገቢያ (Manual Check-in)
-                </h3>
-                <p className="text-xs text-[#706259] font-ethiopic">
-                  ስልክ ለሌላቸው ወይም ቻርጅ ላለቀባቸው ተማሪዎች መምህሩ እዛው ይመዘግባል።
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2">
+                    <UserPlus className="w-5 h-5 text-[#B8860B]" />
+                    Manual In-Class Check-in
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30">
+                    {manualCount} / 5 Used
+                  </span>
+                </div>
+                <p className="text-xs text-[#706259]">
+                  Strict limit: Maximum 5 manual check-ins per session to prevent proxy attendance.
                 </p>
               </div>
               <button
@@ -496,15 +509,15 @@ export default function InstructorSessionPresenter({
 
             {/* Quick Reason Picker */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#706259] font-ethiopic">የምክንያት ምርጫ</label>
+              <label className="text-xs font-bold text-[#706259]">Verification Reason</label>
               <select
                 value={manualReason}
                 onChange={(e) => setManualReason(e.target.value)}
                 className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
               >
-                <option value="No smartphone / dead battery">📵 ስማርት ፎን የለውም / ቻርጅ አልቋል</option>
-                <option value="No cellular data / internet down">🌐 ኢንተርኔት / ዳታ የለውም</option>
-                <option value="Physical paper sign-in verified">📝 በወረቀት ተረጋግጦ የተፈረመ</option>
+                <option value="No smartphone / dead battery">📵 No smartphone / battery died</option>
+                <option value="No cellular data / internet down">🌐 No cellular data / network down</option>
+                <option value="Physical paper sign-in verified">📝 Verified physical sign-in in hall</option>
               </select>
             </div>
 
@@ -513,7 +526,7 @@ export default function InstructorSessionPresenter({
               <Search className="w-4 h-4 text-[#706259] absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="በስም ወይም በ ID ፈልግ (ምሳሌ Abebe)..."
+                placeholder="Search student by name or ID (e.g. Abebe)..."
                 value={manualSearchQuery}
                 onChange={(e) => setManualSearchQuery(e.target.value)}
                 className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl pl-9 pr-3 py-2 text-xs text-[#2C221E] placeholder-[#A6978A] focus:outline-none focus:border-[#B8860B]"
@@ -538,11 +551,11 @@ export default function InstructorSessionPresenter({
                     <p className="text-[10px] text-[#706259] font-mono">{stu.studentId} • {stu.phone}</p>
                   </div>
                   <button
-                    disabled={isSubmittingManual}
+                    disabled={isSubmittingManual || manualCount >= 5}
                     onClick={() => handleManualMark(stu)}
-                    className="px-3 py-1.5 btn-ochre text-xs font-bold rounded-lg shadow-sm transition-all disabled:opacity-50 font-ethiopic"
+                    className="px-3 py-1.5 btn-ochre text-xs font-bold rounded-lg shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    ተገኝቷል (Present)
+                    {manualCount >= 5 ? "Cap Reached (5/5)" : "Mark Present"}
                   </button>
                 </div>
               ))}
@@ -553,7 +566,7 @@ export default function InstructorSessionPresenter({
                 onClick={() => setIsManualModalOpen(false)}
                 className="px-4 py-2 text-xs font-bold text-[#706259] hover:text-[#2C221E]"
               >
-                ጨርስ (Done)
+                Done
               </button>
             </div>
           </div>
@@ -562,9 +575,9 @@ export default function InstructorSessionPresenter({
 
       {/* Footer */}
       <footer className="text-center text-xs text-[#706259] pt-3 border-t border-[#EADBCE] flex items-center justify-between">
-        <span className="font-medium font-ethiopic">የሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት • Addis Ababa University</span>
-        <span className="font-semibold text-[#B8860B]">Manual In-Class Fallback Enabled</span>
-        <span className="font-mono text-[10px]">v2.1.0</span>
+        <span className="font-medium">Department of Software Engineering • Injibara University</span>
+        <span className="font-semibold text-[#B8860B]">Anti-Proxy Limit Enforced (Max 5 Manual)</span>
+        <span className="font-mono text-[10px]">v2.2.0</span>
       </footer>
     </div>
   );

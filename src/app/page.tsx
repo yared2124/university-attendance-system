@@ -28,11 +28,11 @@ export default function Home() {
             <Building2 className="w-5 h-5 text-[#B8860B]" />
           </div>
           <div>
-            <span className="font-black text-sm text-[#2C221E] tracking-tight font-ethiopic">
-              አዲስ አበባ ዩኒቨርሲቲ • Addis Ababa University
+            <span className="font-black text-sm text-[#2C221E] tracking-tight">
+              Injibara University
             </span>
-            <p className="text-[11px] text-[#706259] font-medium font-ethiopic">
-              የሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት • Smart Attendance System
+            <p className="text-[11px] text-[#706259] font-medium">
+              Department of Software Engineering • Class Attendance System
             </p>
           </div>
         </div>
@@ -48,7 +48,7 @@ export default function Home() {
             href="/instructor"
             className="px-4 py-2 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-xs font-bold text-[#2C221E] rounded-xl shadow-sm transition-all"
           >
-            👨‍🏫 Instructor Portal
+            👨‍🏫 Instructor Deck
           </Link>
           <Link
             href="/mini-app"
@@ -67,7 +67,7 @@ export default function Home() {
         </div>
 
         <div className="space-y-3 max-w-3xl mx-auto">
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-[#2C221E] leading-tight font-ethiopic">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-[#2C221E] leading-tight">
             Smart University Attendance & Cohort Oversight
           </h1>
           <p className="text-sm sm:text-base text-[#706259] max-w-2xl mx-auto leading-relaxed">
@@ -90,7 +90,7 @@ export default function Home() {
                 Department Head Portal
               </h3>
               <p className="text-xs text-[#706259] leading-relaxed">
-                Academic Year & Semester tracking across 5 Batches, direct Telegram at-risk warnings, one-click phone calls, drag-and-drop CSV/Excel roster whitelisting, and excuse reconciliation.
+                Academic Year & Semester tracking across 5 Batches, direct Telegram at-risk warnings, one-click phone calls, drag-and-drop CSV/Excel roster whitelisting, and faculty compliance tracking.
               </p>
             </div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#B8860B] group-hover:translate-x-1 transition-transform">
@@ -108,10 +108,10 @@ export default function Home() {
                 <QrCode className="w-6 h-6" />
               </div>
               <h3 className="text-base font-black text-[#2C221E] group-hover:text-[#B8860B] transition-colors">
-                Instructor Presenter
+                Instructor Presenter Deck
               </h3>
               <p className="text-xs text-[#706259] leading-relaxed">
-                15-second dynamic QR code projector screen, high-contrast rolling passcode mode for power outages, and in-class manual check-in for students without smartphones or internet.
+                15-second dynamic QR code projector screen, high-contrast rolling passcode mode for power outages, and capped in-class manual check-in (maximum 5 students).
               </p>
             </div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#1E7E53] group-hover:translate-x-1 transition-transform">
@@ -132,7 +132,7 @@ export default function Home() {
                 Student Telegram Mini App
               </h3>
               <p className="text-xs text-[#706259] leading-relaxed">
-                Seamless Telegram integration. Point camera at projector QR or enter rolling passcode with tactile haptic confirmation and live personal attendance health metrics.
+                Single-device Telegram identity binding. Scan projector QR code or enter rolling passcode with tactile haptic confirmation and personal attendance standing.
               </p>
             </div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#B83833] group-hover:translate-x-1 transition-transform">
@@ -150,8 +150,8 @@ export default function Home() {
           </div>
           <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#EADBCE] shadow-sm">
             <UserCheck className="w-4 h-4 text-[#B8860B] mb-1.5" />
-            <p className="text-xs font-bold text-[#2C221E]">In-Class Manual Entry</p>
-            <p className="text-[10px] text-[#706259]">For students without smartphones</p>
+            <p className="text-xs font-bold text-[#2C221E]">Capped In-Class Entry</p>
+            <p className="text-[10px] text-[#706259]">Strict max 5 manual check-ins</p>
           </div>
           <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#EADBCE] shadow-sm">
             <PhoneCall className="w-4 h-4 text-[#B83833] mb-1.5" />
@@ -161,14 +161,14 @@ export default function Home() {
           <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#EADBCE] shadow-sm">
             <Upload className="w-4 h-4 text-[#1E7E53] mb-1.5" />
             <p className="text-xs font-bold text-[#2C221E]">Drag & Drop Upload</p>
-            <p className="text-[10px] text-[#706259]">CSV & Excel automatic whitelist</p>
+            <p className="text-[10px] text-[#706259]">CSV & Excel automated whitelist</p>
           </div>
         </div>
       </main>
 
       {/* Footer */}
       <footer className="border-t border-[#EADBCE] max-w-7xl mx-auto w-full px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#706259]">
-        <p className="font-medium font-ethiopic">የሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት • Addis Ababa University</p>
+        <p className="font-medium">Injibara University • Department of Software Engineering</p>
         <p className="font-semibold text-[#B8860B]">Smart Attendance Integrity System</p>
       </footer>
     </div>

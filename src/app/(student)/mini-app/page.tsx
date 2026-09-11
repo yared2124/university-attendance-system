@@ -41,7 +41,6 @@ declare global {
 }
 
 export default function StudentMiniApp() {
-  const [language, setLanguage] = useState<"am" | "en">("am");
   const [activeTab, setActiveTab] = useState<"qr" | "passcode">("qr");
   const [passcode, setPasscode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,11 +50,12 @@ export default function StudentMiniApp() {
     details?: string;
   } | null>(null);
 
-  const [studentInfo, setStudentInfo] = useState({
-    fullName: "አበበ ከበደ",
+  const [studentInfo] = useState({
+    fullName: "Abebe Kebede",
     studentId: "UGR/1401/14",
     batchYear: 3,
-    department: "የሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት",
+    department: "Department of Software Engineering",
+    institution: "Injibara University",
     phone: "+251922110001",
   });
 
@@ -111,7 +111,7 @@ export default function StudentMiniApp() {
         confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
         setSubmissionResult({
           success: true,
-          message: language === "am" ? "አቴንዳንስዎ በተሳካ ሁኔታ ተመዝግቧል!" : "Attendance Successfully Confirmed!",
+          message: "Attendance Confirmed Successfully!",
           details: `SEng3112 • ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
         });
         setPasscode("");
@@ -119,14 +119,14 @@ export default function StudentMiniApp() {
         triggerHaptic("error");
         setSubmissionResult({
           success: false,
-          message: data.message || (language === "am" ? "የተሳሳተ ወይም ያለፈበት ኮድ ነው" : "Invalid or expired passcode"),
+          message: data.message || "Invalid or expired passcode",
         });
       }
     } catch {
       triggerHaptic("error");
       setSubmissionResult({
         success: false,
-        message: language === "am" ? "የኔትወርክ ስህተት። እባክዎ በድጋሚ ይሞክሩ።" : "Network error. Please try again.",
+        message: "Network error occurred. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -161,21 +161,21 @@ export default function StudentMiniApp() {
         confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
         setSubmissionResult({
           success: true,
-          message: language === "am" ? "የ QR ኮድ ማረጋገጫው ተሳክቷል!" : "QR Code Verified Successfully!",
+          message: "QR Code Token Verified Successfully!",
           details: `SEng3112 • ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
         });
       } else {
         triggerHaptic("error");
         setSubmissionResult({
           success: false,
-          message: data.message || (language === "am" ? "የ QR ኮዱ ጊዜው አልፎበታል" : "QR Token Expired"),
+          message: data.message || "Dynamic QR token expired. Scan the newest token on the screen.",
         });
       }
     } catch {
       triggerHaptic("error");
       setSubmissionResult({
         success: false,
-        message: language === "am" ? "የግንኙነት ስህተት አጋጥሟል" : "Connection Error",
+        message: "Connection error occurred. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -185,50 +185,42 @@ export default function StudentMiniApp() {
   return (
     <main className="min-h-screen max-w-md mx-auto px-5 py-6 flex flex-col justify-between">
       <div className="space-y-6">
-        {/* Top Header matching reference image exactly */}
+        {/* Top Header */}
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-black text-[#2C221E] tracking-tight font-ethiopic">
-              {language === "am" ? "የአቴንዳንስ መከታተያ" : "Attendance Tracker"}
+            <div className="flex items-center gap-1.5">
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30">
+                {studentInfo.institution}
+              </span>
+              <span className="text-[11px] text-[#706259] font-medium">Student Portal</span>
+            </div>
+            <h1 className="text-2xl font-black text-[#2C221E] tracking-tight">
+              Attendance Verification
             </h1>
-            <p className="text-xs text-[#706259] font-medium font-ethiopic">
-              {language === "am" ? "ለሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት ተማሪዎች" : "Department of Software Engineering"}
+            <p className="text-xs text-[#706259] font-medium">
+              {studentInfo.department} • Year {studentInfo.batchYear}
             </p>
           </div>
 
-          {/* Settings Circle Button matching reference */}
-          <div className="w-12 h-12 rounded-full bg-[#E5DCD0] flex items-center justify-center text-[#5A4B41] shadow-sm">
-            <Settings className="w-5 h-5" />
+          {/* Student Profile Avatar Badge */}
+          <div className="w-11 h-11 rounded-2xl bg-[#FBF2DE] border border-[#B8860B]/30 flex items-center justify-center text-[#B8860B] shadow-sm font-bold text-xs">
+            AK
           </div>
         </div>
 
-        {/* Language Switcher Pill matching reference */}
-        <div className="flex items-center justify-between pt-1">
-          <span className="text-sm font-bold text-[#2C221E] font-ethiopic">
-            {language === "am" ? "ቋንቋ" : "Language"}
-          </span>
-
-          <div className="flex items-center bg-[#ECE4D8] rounded-xl p-1 gap-1">
-            <button
-              onClick={() => setLanguage("en")}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                language === "en"
-                  ? "bg-[#B8860B] text-white shadow-sm"
-                  : "text-[#706259] hover:text-[#2C221E]"
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage("am")}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all font-ethiopic ${
-                language === "am"
-                  ? "bg-[#B8860B] text-white shadow-sm"
-                  : "text-[#706259] hover:text-[#2C221E]"
-              }`}
-            >
-              አማ
-            </button>
+        {/* Bound Student Identity Card */}
+        <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#EADBCE] shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-bold text-[#2C221E]">{studentInfo.fullName}</span>
+            <span className="font-mono text-[11px] font-bold text-[#B8860B] bg-[#FBF2DE] px-2 py-0.5 rounded-md border border-[#B8860B]/30">
+              {studentInfo.studentId}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] text-[#706259]">
+            <span className="font-mono">{studentInfo.phone}</span>
+            <span className="text-[#1E7E53] font-bold flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#1E7E53]" /> Bound Telegram Identity
+            </span>
           </div>
         </div>
 
@@ -248,7 +240,7 @@ export default function StudentMiniApp() {
                 <AlertCircle className="w-5 h-5 text-[#C62828] shrink-0 mt-0.5" />
               )}
               <div>
-                <p className="text-sm font-bold font-ethiopic">{submissionResult.message}</p>
+                <p className="text-sm font-bold">{submissionResult.message}</p>
                 {submissionResult.details && (
                   <p className="text-xs opacity-80 mt-0.5 font-medium">
                     {submissionResult.details}
@@ -259,26 +251,25 @@ export default function StudentMiniApp() {
           </div>
         )}
 
-        {/* 3 Main Action Cards matching reference screenshot */}
-        <div className="space-y-3.5">
+        {/* 3 Main Action Cards */}
+        <div className="space-y-3">
           {/* Card 1: Scan Projector QR */}
           <div
             onClick={() => setActiveTab("qr")}
-            className={`warm-card p-4 flex items-center justify-between cursor-pointer border ${
+            className={`warm-card p-4 flex items-center justify-between cursor-pointer border transition-all ${
               activeTab === "qr" ? "border-[#B8860B] ring-2 ring-[#B8860B]/20" : ""
             }`}
           >
             <div className="flex items-center gap-4">
-              {/* Green Icon Box like reference */}
-              <div className="w-14 h-14 rounded-2xl bg-[#E8F3EE] text-[#1E7E53] flex items-center justify-center shrink-0">
-                <QrCode className="w-7 h-7" />
+              <div className="w-13 h-13 rounded-2xl bg-[#E8F3EE] text-[#1E7E53] flex items-center justify-center shrink-0 p-3">
+                <QrCode className="w-6 h-6" />
               </div>
               <div className="space-y-0.5">
-                <h3 className="text-sm font-black text-[#2C221E] font-ethiopic">
-                  {language === "am" ? "የፕሮጀክተር QR ስካን" : "Scan Projector QR"}
+                <h3 className="text-sm font-black text-[#2C221E]">
+                  Scan Projector Dynamic QR
                 </h3>
-                <p className="text-xs text-[#706259] font-medium font-ethiopic">
-                  {language === "am" ? "በየ 15 ሰከንዱ የሚቀያየረውን ኮድ በካሜራ ስካን ያድርጉ" : "Dynamic time-decaying 15s visual token"}
+                <p className="text-xs text-[#706259] font-medium">
+                  Point camera at dynamic 15-second visual token
                 </p>
               </div>
             </div>
@@ -288,21 +279,20 @@ export default function StudentMiniApp() {
           {/* Card 2: 6-Digit Rolling Code */}
           <div
             onClick={() => setActiveTab("passcode")}
-            className={`warm-card p-4 flex items-center justify-between cursor-pointer border ${
+            className={`warm-card p-4 flex items-center justify-between cursor-pointer border transition-all ${
               activeTab === "passcode" ? "border-[#B8860B] ring-2 ring-[#B8860B]/20" : ""
             }`}
           >
             <div className="flex items-center gap-4">
-              {/* Golden Icon Box like reference */}
-              <div className="w-14 h-14 rounded-2xl bg-[#FBF2DE] text-[#B8860B] flex items-center justify-center shrink-0">
-                <KeyRound className="w-7 h-7" />
+              <div className="w-13 h-13 rounded-2xl bg-[#FBF2DE] text-[#B8860B] flex items-center justify-center shrink-0 p-3">
+                <KeyRound className="w-6 h-6" />
               </div>
               <div className="space-y-0.5">
-                <h3 className="text-sm font-black text-[#2C221E] font-ethiopic">
-                  {language === "am" ? "ባለ 6-ፊደል Rolling Code" : "6-Digit Rolling Code"}
+                <h3 className="text-sm font-black text-[#2C221E]">
+                  6-Digit Rolling Code
                 </h3>
-                <p className="text-xs text-[#706259] font-medium font-ethiopic">
-                  {language === "am" ? "መብራት ሲጠፋ በመምህሩ ስልክ የሚታየውን ኮድ ያስገቡ" : "Power outage fallback mode (cycles every 20s)"}
+                <p className="text-xs text-[#706259] font-medium">
+                  Power outage fallback mode (cycles every 20s)
                 </p>
               </div>
             </div>
@@ -312,16 +302,15 @@ export default function StudentMiniApp() {
           {/* Card 3: Attendance History & Health */}
           <div className="warm-card p-4 flex items-center justify-between cursor-pointer">
             <div className="flex items-center gap-4">
-              {/* Crimson/Red Icon Box like reference */}
-              <div className="w-14 h-14 rounded-2xl bg-[#FAEAE9] text-[#B83833] flex items-center justify-center shrink-0">
-                <FileText className="w-7 h-7" />
+              <div className="w-13 h-13 rounded-2xl bg-[#FAEAE9] text-[#B83833] flex items-center justify-center shrink-0 p-3">
+                <FileText className="w-6 h-6" />
               </div>
               <div className="space-y-0.5">
-                <h3 className="text-sm font-black text-[#2C221E] font-ethiopic">
-                  {language === "am" ? "የተቀመጡ ሪፖርቶችና ጤንነት" : "Attendance Health & History"}
+                <h3 className="text-sm font-black text-[#2C221E]">
+                  Attendance Standing & Record
                 </h3>
-                <p className="text-xs text-[#706259] font-medium font-ethiopic">
-                  {language === "am" ? "የዚህ ሴሚስተር አጠቃላይ ምጣኔ: 92% (በጥሩ ደረጃ)" : "Semester Rate: 92% (Good Standing)"}
+                <p className="text-xs text-[#706259] font-medium">
+                  Current Semester Rate: <span className="font-bold text-[#1E7E53]">92% (Good Standing)</span>
                 </p>
               </div>
             </div>
@@ -333,36 +322,36 @@ export default function StudentMiniApp() {
         {activeTab === "qr" && (
           <div className="warm-card p-5 space-y-4 text-center border-t-2 border-[#B8860B]">
             <div className="space-y-1">
-              <h4 className="text-xs font-bold text-[#2C221E] uppercase tracking-wider font-ethiopic">
-                {language === "am" ? "ካሜራውን ወደ ፕሮጀክተሩ ያነጣጥሩ" : "Point Camera at Projector"}
+              <h4 className="text-xs font-bold text-[#2C221E] uppercase tracking-wider">
+                Align Camera with Projector Screen
               </h4>
-              <p className="text-xs text-[#706259] font-ethiopic">
-                {language === "am" ? "ፎቶ አንስቶ ለሌላ ሰው መላክ ፈጽሞ አይሰራም" : "Time-decaying anti-proxy token"}
+              <p className="text-xs text-[#706259]">
+                Anti-proxy time-decaying visual cryptographic handshake
               </p>
             </div>
 
-            {/* Viewfinder box with soft parchment feel */}
-            <div className="relative aspect-square max-w-[210px] mx-auto rounded-3xl bg-[#F4EFE6] border-2 border-dashed border-[#B8860B]/40 p-4 flex flex-col items-center justify-center shadow-inner">
+            {/* Viewfinder box */}
+            <div className="relative aspect-square max-w-[200px] mx-auto rounded-3xl bg-[#F4EFE6] border-2 border-dashed border-[#B8860B]/40 p-4 flex flex-col items-center justify-center shadow-inner">
               <QrCode className="w-16 h-16 text-[#B8860B] animate-pulse" />
-              <p className="text-[10px] font-bold text-[#706259] mt-2 font-ethiopic">
-                {language === "am" ? "ማረጋገጫ ለመቀበል ዝግጁ ነው" : "Ready to capture token"}
+              <p className="text-[10px] font-bold text-[#706259] mt-2">
+                Ready to capture token
               </p>
             </div>
 
             <button
               disabled={isSubmitting}
               onClick={handleSimulateScan}
-              className="w-full py-3.5 px-4 btn-ochre text-xs font-bold rounded-2xl shadow-md flex items-center justify-center gap-2 font-ethiopic"
+              className="w-full py-3.5 px-4 btn-ochre text-xs font-bold rounded-2xl shadow-md flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  {language === "am" ? "እያረጋገጠ ነው..." : "Cryptographically Verifying..."}
+                  Cryptographically Verifying...
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  {language === "am" ? "አሁን ስካን አድርግ" : "Scan Dynamic Token Now"}
+                  Scan Dynamic Token Now
                 </>
               )}
             </button>
@@ -372,11 +361,11 @@ export default function StudentMiniApp() {
         {activeTab === "passcode" && (
           <div className="warm-card p-5 space-y-4 text-center border-t-2 border-[#B8860B]">
             <div className="space-y-1">
-              <h4 className="text-xs font-bold text-[#2C221E] uppercase tracking-wider font-ethiopic">
-                {language === "am" ? "የክፍሉን ባለ 6-ፊደል ኮድ ያስገቡ" : "Enter 6-Digit Rolling Code"}
+              <h4 className="text-xs font-bold text-[#2C221E] uppercase tracking-wider">
+                Enter 6-Digit In-Class Rolling Code
               </h4>
-              <p className="text-xs text-[#706259] font-ethiopic">
-                {language === "am" ? "በየ 20 ሰከንዱ በመምህሩ ስልክ ይቀያየራል" : "Instructor classroom code (cycles every 20s)"}
+              <p className="text-xs text-[#706259]">
+                Displayed on the instructor device screen (rotates every 20s)
               </p>
             </div>
 
@@ -436,35 +425,26 @@ export default function StudentMiniApp() {
                 onClick={handleBackspace}
                 className="py-2.5 bg-[#FAEAE9] hover:bg-[#F8D7DA] active:bg-[#B83833] active:text-white rounded-xl text-xs font-bold text-[#B83833] border border-[#F8D7DA] transition-colors"
               >
-                {language === "am" ? "አጥፋ" : "Clear"}
+                Clear
               </button>
             </div>
           </div>
         )}
 
-        {/* Bottom Eye Icon matching reference screenshot */}
-        <div className="flex items-center justify-center py-1">
-          <div className="w-10 h-10 rounded-full bg-[#FBF2DE] text-[#B8860B] border border-[#EADBCE] flex items-center justify-center shadow-sm">
-            <Eye className="w-5 h-5" />
-          </div>
-        </div>
-
-        {/* Bottom Parchment Info Box matching reference */}
+        {/* Bottom Parchment Notice */}
         <div className="p-4 rounded-2xl bg-[#EFE9DF] border border-[#E2D8CA] text-xs text-[#52443B] space-y-1">
           <div className="flex items-start gap-2.5">
             <Info className="w-4 h-4 text-[#B8860B] shrink-0 mt-0.5" />
-            <p className="font-medium leading-relaxed font-ethiopic">
-              {language === "am"
-                ? "ይህ መተግበሪያ ከቴሌግራም መለያዎ ጋር በቋሚነት የተቆራኘ ነው። አቴንዳንስዎ በዲፓርትመንቱ ቋሚ ሪከርድነት በቀጥታ ይመዘገባል!"
-                : "This app is cryptographically bound to your single Telegram account. Proxy attendance is strictly prohibited."}
+            <p className="font-medium leading-relaxed">
+              This session is cryptographically bound to your single verified Telegram device. Proxy check-in and remote attendance sharing are prohibited by university policy.
             </p>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="pt-6 pb-2 text-center text-xs text-[#8C7A6F] font-ethiopic font-medium">
-        {language === "am" ? "አዲስ አበባ ዩኒቨርሲቲ • የሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት" : "Addis Ababa University • Department of Software Engineering"}
+      <footer className="pt-6 pb-2 text-center text-xs text-[#8C7A6F] font-medium">
+        Injibara University • Department of Software Engineering
       </footer>
     </main>
   );
