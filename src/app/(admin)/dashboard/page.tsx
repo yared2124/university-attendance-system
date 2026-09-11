@@ -683,18 +683,10 @@ export default function DepartmentHeadDashboard() {
       academicTerm={`${academicYear} • Semester ${selectedSemester}`}
       topHeaderActions={
         <div className="flex items-center gap-2">
-          {/* Department Selector */}
-          <div className="flex items-center gap-1.5 bg-[#F9F6F0] border border-[#EADBCE] rounded-xl px-2.5 py-1 text-xs text-[#2C221E] font-bold">
-            <span className="text-[#706259] font-medium hidden sm:inline">Dept:</span>
-            <select
-              value={selectedDepartment}
-              onChange={(e) => setSelectedDepartment(e.target.value)}
-              className="bg-transparent font-bold text-[#2C221E] focus:outline-none cursor-pointer text-xs"
-            >
-              <option value="Software Engineering">Software Engineering</option>
-              <option value="Computer Science">Computer Science</option>
-              <option value="Information Technology">Information Technology</option>
-            </select>
+          {/* Department Badge */}
+          <div className="flex items-center gap-1.5 bg-[#FBF2DE] border border-[#B8860B]/30 rounded-xl px-2.5 py-1 text-xs font-bold text-[#B8860B]">
+            <Building2 className="w-3.5 h-3.5 text-[#B8860B]" />
+            <span>Software Engineering</span>
           </div>
 
           {/* Semester Switcher Tabs */}
