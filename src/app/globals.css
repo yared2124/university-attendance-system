@@ -10,7 +10,7 @@
   --parchment-surface: #FFFFFF;
   --parchment-card: #FFFFFF;
   --parchment-accent: #B8860B; /* Golden ochre */
-  --parchment-accent-hover: #996F00;
+  --parchment-accent-hover: #9E7307;
   --parchment-text-primary: #2C221E; /* Deep espresso charcoal */
   --parchment-text-secondary: #706259; /* Warm earthy taupe */
   --parchment-border: #EADBCE;
@@ -18,46 +18,86 @@
   --parchment-card-shadow: 0 4px 20px -2px rgba(92, 70, 53, 0.06), 0 2px 6px -1px rgba(92, 70, 53, 0.04);
 }
 
-body {
-  background-color: var(--parchment-bg);
-  color: var(--parchment-text-primary);
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: #F9F6F0 !important;
+  color: #2C221E !important;
   font-family: 'Plus Jakarta Sans', 'Noto Sans Ethiopic', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Ethiopic & Heading font styling */
 .font-ethiopic {
-  font-family: 'Noto Sans Ethiopic', 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Noto Sans Ethiopic', 'Plus Jakarta Sans', system-ui, sans-serif !important;
 }
 
 /* Warm Card container matching reference */
 .warm-card {
-  background: var(--parchment-card);
-  border: 1px solid var(--parchment-border);
-  box-shadow: var(--parchment-card-shadow);
-  border-radius: 1.5rem; /* rounded-3xl */
+  background: #FFFFFF !important;
+  border: 1px solid #EADBCE !important;
+  box-shadow: 0 4px 20px -2px rgba(92, 70, 53, 0.06), 0 2px 6px -1px rgba(92, 70, 53, 0.04) !important;
+  border-radius: 1.5rem !important; /* rounded-3xl */
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .warm-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px -4px rgba(92, 70, 53, 0.1);
-  border-color: #D4C0AD;
+  box-shadow: 0 8px 25px -4px rgba(92, 70, 53, 0.1) !important;
+  border-color: #D4C0AD !important;
 }
 
 /* Golden Ochre Pill button matching reference */
 .btn-ochre {
-  background-color: #B8860B;
-  color: #FFFFFF;
-  font-weight: 700;
-  border-radius: 1rem;
+  background-color: #B8860B !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border-radius: 0.75rem !important;
+  border: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   transition: all 0.15s ease-in-out;
 }
 
 .btn-ochre:hover {
-  background-color: #9E7307;
+  background-color: #9E7307 !important;
   transform: scale(0.99);
+}
+
+/* Custom UI Badges & Status */
+.badge-green {
+  background-color: #E8F3EE !important;
+  color: #1E7E53 !important;
+  border: 1px solid #C2E8CA !important;
+}
+
+.badge-gold {
+  background-color: #FBF2DE !important;
+  color: #B8860B !important;
+  border: 1px solid #EADBCE !important;
+}
+
+.badge-red {
+  background-color: #FAEAE9 !important;
+  color: #B83833 !important;
+  border: 1px solid #F8D7DA !important;
+}
+
+/* Inputs & Form controls */
+input, select, textarea {
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #B8860B !important;
 }
 
 /* Clean Custom Scrollbars */
