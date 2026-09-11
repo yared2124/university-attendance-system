@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import SidebarLayout, { NavItem } from "@/components/layout/SidebarLayout";
 import Link from "next/link";
 import * as XLSX from "xlsx";
 import {
@@ -50,6 +51,7 @@ interface StudentRosterItem {
 export default function InstructorDashboard() {
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
+  const [activeInstructorTab, setActiveInstructorTab] = useState<"session" | "roster" | "batches" | "register">("session");
 
   // Batch Filter & Course Selection
   const [selectedBatchYear, setSelectedBatchYear] = useState<number>(1);
@@ -305,8 +307,43 @@ export default function InstructorDashboard() {
 
   const lowAttendanceStudents = rosterStudents.filter((s) => s.attendanceRate < 80);
 
+  const navItems: NavItem[] = [
+    {
+      id: "session",
+      label: "Live Attendance Session",
+      icon: <Play className="w-4 h-4" />,
+    },
+    {
+      id: "roster",
+      label: "Enrolled Student Roster",
+      icon: <Users className="w-4 h-4" />,
+      badge: lowAttendanceStudents.length > 0 ? `${lowAttendanceStudents.length} At Risk` : undefined,
+      badgeColor: "bg-[#FAEAE9] text-[#B83833]",
+    },
+    {
+      id: "batches",
+      label: "Teaching Batches (Years 1–5)",
+      icon: <Layers className="w-4 h-4" />,
+      badge: `Year ${selectedBatchYear}`,
+      badgeColor: "bg-[#FBF2DE] text-[#B8860B]",
+    },
+    {
+      id: "register",
+      label: "Student Registration",
+      icon: <UserPlus className="w-4 h-4" />,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F9F6F0] text-[#2C221E] p-6 md:p-10 max-w-7xl mx-auto space-y-8">
+    <SidebarLayout
+      portalTitle="Instructor Control Deck"
+      portalSubtitle="Department of Software Engineering"
+      userRoleLabel="INSTRUCTOR"
+      userName="Dr. Yared Tadesse"
+      navItems={navItems}
+      activeItemId={activeInstructorTab}
+      onSelectItem={(id) => setActiveInstructorTab(id as any)}
+    >
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EADBCE] pb-6">
         <div className="flex items-center gap-4">
@@ -413,258 +450,446 @@ export default function InstructorDashboard() {
         </div>
       </div>
 
-      {/* Main Content Layout: In-Page Attendance Launcher & Course Selector */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Course Selector and Quick Launcher Banner */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EADBCE] pb-3">
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#B8860B] bg-[#FBF2DE] px-2 py-0.5 rounded-md border border-[#B8860B]/30">
-                  Year {selectedBatchYear} Active Curriculum
-                </span>
-                <h2 className="text-lg font-bold text-[#2C221E] mt-1">
-                  {activeCourse?.code} - {activeCourse?.title}
-                </h2>
-                <p className="text-xs text-[#706259] flex items-center gap-2 mt-0.5">
-                  <Clock className="w-3.5 h-3.5 text-[#B8860B]" />
-                  Schedule: {activeCourse?.scheduleSlot} • {activeCourse?.studentsCount} Enrolled Students
+      
+      {/* TAB 1: LIVE ATTENDANCE SESSION LAUNCHER */}
+      {activeInstructorTab === "session" && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left 2 Cols: Course Selector and Quick Launcher Banner */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-sm space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EADBCE] pb-3">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#B8860B] bg-[#FBF2DE] px-2 py-0.5 rounded-md border border-[#B8860B]/30">
+                      Year {selectedBatchYear} Active Curriculum
+                    </span>
+                    <h2 className="text-lg font-bold text-[#2C221E] mt-1">
+                      {activeCourse?.code} - {activeCourse?.title}
+                    </h2>
+                    <p className="text-xs text-[#706259] flex items-center gap-2 mt-0.5">
+                      <Clock className="w-3.5 h-3.5 text-[#B8860B]" />
+                      Schedule: {activeCourse?.scheduleSlot} • {activeCourse?.studentsCount} Enrolled Students
+                    </p>
+                  </div>
+
+                  {/* Course Switcher if multiple courses in this batch */}
+                  {batchCourses.length > 1 && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-[#706259] font-bold">Switch Course:</span>
+                      <select
+                        value={selectedCourseId}
+                        onChange={(e) => setSelectedCourseId(e.target.value)}
+                        className="bg-[#F4EFE6] border border-[#EADBCE] rounded-xl px-3 py-1.5 text-xs text-[#2C221E] font-bold focus:outline-none focus:border-[#B8860B]"
+                      >
+                        {batchCourses.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.code}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* In-Page Attendance Launch Controls */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-[#706259]">Session Type</label>
+                    <select
+                      value={sessionType}
+                      onChange={(e) => setSessionType(e.target.value as any)}
+                      className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
+                    >
+                      <option value="Morning Lecture">Morning Lecture</option>
+                      <option value="Afternoon Lab">Afternoon Lab</option>
+                      <option value="Make-up Class">Make-up Class</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-[#706259]">Verification Protocol</label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setSessionMode("DYNAMIC_QR")}
+                        className={`p-2 rounded-xl border text-center transition-all ${
+                          sessionMode === "DYNAMIC_QR"
+                            ? "bg-[#E8F3EE] border-[#1E7E53] text-[#1E7E53] font-bold"
+                            : "bg-[#FFFFFF] border-[#EADBCE] text-[#706259]"
+                        }`}
+                      >
+                        <p className="text-xs">Dynamic QR</p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSessionMode("ROLLING_CODE")}
+                        className={`p-2 rounded-xl border text-center transition-all ${
+                          sessionMode === "ROLLING_CODE"
+                            ? "bg-[#FBF2DE] border-[#B8860B] text-[#B8860B] font-bold"
+                            : "bg-[#FFFFFF] border-[#EADBCE] text-[#706259]"
+                        }`}
+                      >
+                        <p className="text-xs">Rolling Code</p>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-[#706259]">In-Class Attendance Action</label>
+                    {activeCourse?.activeSessionId ? (
+                      <Link
+                        href={`/instructor/session/${activeCourse.activeSessionId}`}
+                        className="w-full py-2.5 px-4 bg-[#1E7E53] hover:bg-[#166542] text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all"
+                      >
+                        <Sparkles className="w-4 h-4" /> Resume Presenter
+                      </Link>
+                    ) : (
+                      <button
+                        disabled={isCreating}
+                        onClick={() => handleLaunchSession()}
+                        className="w-full py-2.5 px-4 btn-ochre text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                      >
+                        <Play className="w-4 h-4 fill-current" />
+                        {isCreating ? "Starting..." : "Start Attendance"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right 1 Col: 80% Threshold Summary & Shortcuts */}
+            <div className="warm-card p-6 space-y-4 h-fit border-t-4 border-[#B8860B]">
+              <div className="space-y-1">
+                <h3 className="text-sm font-bold text-[#2C221E] flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-[#B83833]" />
+                  Attendance Standing Alert
+                </h3>
+                <p className="text-xs text-[#706259]">
+                  Year {selectedBatchYear} Turnout Diagnostics
                 </p>
               </div>
 
-              {/* Course Switcher if multiple courses in this batch */}
-              {batchCourses.length > 1 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#706259] font-bold">Switch Course:</span>
-                  <select
-                    value={selectedCourseId}
-                    onChange={(e) => setSelectedCourseId(e.target.value)}
-                    className="bg-[#F4EFE6] border border-[#EADBCE] rounded-xl px-3 py-1.5 text-xs text-[#2C221E] font-bold focus:outline-none focus:border-[#B8860B]"
-                  >
-                    {batchCourses.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.code}
-                      </option>
-                    ))}
-                  </select>
+              <div className="p-3.5 rounded-xl bg-[#FAEAE9] border border-[#F8D7DA] space-y-1 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[#B83833]">80% Threshold</span>
+                  <span className="font-mono font-black text-[#B83833]">
+                    {lowAttendanceStudents.length} Students &lt; 80%
+                  </span>
                 </div>
-              )}
-            </div>
+                <p className="text-[11px] text-[#706259]">
+                  Instructors monitor turnout at 80% to address absentees before students reach the critical 75% exam bar.
+                </p>
+              </div>
 
-            {/* In-Page Attendance Launch Controls */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-[#706259]">Session Type</label>
-                <select
-                  value={sessionType}
-                  onChange={(e) => setSessionType(e.target.value as any)}
-                  className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
+              <div className="space-y-2 pt-1">
+                <button
+                  onClick={() => setActiveInstructorTab("roster")}
+                  className="w-full py-2.5 px-3 bg-[#FFFFFF] hover:bg-[#FBF2DE] border border-[#EADBCE] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
                 >
-                  <option value="Morning Lecture">Morning Lecture</option>
-                  <option value="Afternoon Lab">Afternoon Lab</option>
-                  <option value="Make-up Class">Make-up Class</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-[#706259]">Verification Protocol</label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setSessionMode("DYNAMIC_QR")}
-                    className={`p-2 rounded-xl border text-center transition-all ${
-                      sessionMode === "DYNAMIC_QR"
-                        ? "bg-[#E8F3EE] border-[#1E7E53] text-[#1E7E53] font-bold"
-                        : "bg-[#FFFFFF] border-[#EADBCE] text-[#706259]"
-                    }`}
-                  >
-                    <p className="text-xs">Dynamic QR</p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSessionMode("ROLLING_CODE")}
-                    className={`p-2 rounded-xl border text-center transition-all ${
-                      sessionMode === "ROLLING_CODE"
-                        ? "bg-[#FBF2DE] border-[#B8860B] text-[#B8860B] font-bold"
-                        : "bg-[#FFFFFF] border-[#EADBCE] text-[#706259]"
-                    }`}
-                  >
-                    <p className="text-xs">Rolling Code</p>
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-[#706259]">In-Class Attendance Action</label>
-                {activeCourse?.activeSessionId ? (
-                  <Link
-                    href={`/instructor/session/${activeCourse.activeSessionId}`}
-                    className="w-full py-2.5 px-4 bg-[#1E7E53] hover:bg-[#166542] text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all"
-                  >
-                    <Sparkles className="w-4 h-4" /> Resume Presenter
-                  </Link>
-                ) : (
-                  <button
-                    disabled={isCreating}
-                    onClick={() => handleLaunchSession()}
-                    className="w-full py-2.5 px-4 btn-ochre text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
-                  >
-                    <Play className="w-4 h-4 fill-current" />
-                    {isCreating ? "Starting..." : "Start Attendance"}
-                  </button>
-                )}
+                  <Users className="w-4 h-4 text-[#B8860B]" />
+                  Inspect Enrolled Roster ({rosterStudents.length})
+                </button>
+                <button
+                  onClick={() => setActiveInstructorTab("register")}
+                  className="w-full py-2.5 px-3 bg-[#FFFFFF] hover:bg-[#FBF2DE] border border-[#EADBCE] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
+                >
+                  <UserPlus className="w-4 h-4 text-[#1E7E53]" />
+                  Whitelist / Upload Students
+                </button>
               </div>
             </div>
           </div>
         </div>
+      )}
 
-        {/* Right 1 Col: Quick Register Buttons & 80% Threshold Summary */}
-        <div className="warm-card p-6 space-y-4 h-fit border-t-4 border-[#B8860B]">
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#2C221E] flex items-center gap-1.5">
-              <UserPlus className="w-4 h-4 text-[#B8860B]" />
-              Enroll Students in Year {selectedBatchYear}
-            </h3>
-            <p className="text-xs text-[#706259]">
-              Two options to register students into this cohort:
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <button
-              onClick={() => setIsManualStudentModalOpen(true)}
-              className="w-full py-2.5 px-3 bg-[#FFFFFF] hover:bg-[#FBF2DE] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
-            >
-              <UserPlus className="w-4 h-4 text-[#B8860B]" />
-              Manual Student Registration
-            </button>
-            <button
-              onClick={() => setIsUploadRosterModalOpen(true)}
-              className="w-full py-2.5 px-3 bg-[#FFFFFF] hover:bg-[#FBF2DE] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2"
-            >
-              <Upload className="w-4 h-4 text-[#1E7E53]" />
-              Upload Excel / CSV Spreadsheet
-            </button>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-[#FAEAE9] border border-[#F8D7DA] space-y-1 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-[#B83833] flex items-center gap-1">
-                <AlertTriangle className="w-3.5 h-3.5 text-[#B83833]" />
-                80% Attendance Threshold
-              </span>
-              <span className="font-mono font-black text-[#B83833]">
-                {lowAttendanceStudents.length} Students Below 80%
-              </span>
+      {/* TAB 2: ENROLLED STUDENT ROSTER */}
+      {activeInstructorTab === "roster" && (
+        <div className="space-y-4 animate-in fade-in duration-200">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <h3 className="text-sm font-black text-[#2C221E] flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#B8860B]" />
+                Enrolled Students Roster • Year {selectedBatchYear} ({rosterStudents.length} Students)
+              </h3>
+              <p className="text-xs text-[#706259]">
+                Live attendance standing calculated across all course sessions
+              </p>
             </div>
-            <p className="text-[11px] text-[#706259]">
-              Instructors monitor turnout at 80% to address absentees before students reach the critical 75% exam bar.
-            </p>
-          </div>
-        </div>
-      </div>
 
-      {/* Course Enrolled Students Table with 80% Warning Filter */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="space-y-0.5">
-            <h3 className="text-sm font-black text-[#2C221E] flex items-center gap-2">
-              <Users className="w-4 h-4 text-[#B8860B]" />
-              Enrolled Students Roster • Year {selectedBatchYear} ({rosterStudents.length} Students)
-            </h3>
-            <p className="text-xs text-[#706259]">
-              Live attendance standing calculated across all course sessions
-            </p>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-[#706259] absolute left-3.5 top-2.5" />
+                <input
+                  type="text"
+                  placeholder="Search student by name, ID or phone..."
+                  value={rosterSearch}
+                  onChange={(e) => setRosterSearch(e.target.value)}
+                  className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl pl-10 pr-4 py-2 text-xs text-[#2C221E] placeholder-[#A6978A] focus:outline-none focus:border-[#B8860B] shadow-sm font-medium"
+                />
+              </div>
+              <button
+                onClick={() => setIsManualStudentModalOpen(true)}
+                className="px-3 py-2 btn-ochre text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <UserPlus className="w-3.5 h-3.5" /> Add Student
+              </button>
+            </div>
           </div>
 
-          <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 text-[#706259] absolute left-3.5 top-2.5" />
-            <input
-              type="text"
-              placeholder="Search student by name, ID or phone..."
-              value={rosterSearch}
-              onChange={(e) => setRosterSearch(e.target.value)}
-              className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl pl-10 pr-4 py-2 text-xs text-[#2C221E] placeholder-[#A6978A] focus:outline-none focus:border-[#B8860B] shadow-sm font-medium"
-            />
-          </div>
-        </div>
-
-        <div className="overflow-x-auto rounded-3xl border border-[#EADBCE] bg-[#FFFFFF] shadow-sm">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
-              <tr>
-                <th className="py-3 px-4">Student Name</th>
-                <th className="py-3 px-4">Student ID</th>
-                <th className="py-3 px-4">Telegram Phone</th>
-                <th className="py-3 px-4">Batch</th>
-                <th className="py-3 px-4">Attendance Rate (%)</th>
-                <th className="py-3 px-4 text-right">Instructor Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#EADBCE]">
-              {isLoadingRoster ? (
+          <div className="overflow-x-auto rounded-3xl border border-[#EADBCE] bg-[#FFFFFF] shadow-sm">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
                 <tr>
-                  <td colSpan={6} className="py-6 text-center text-xs text-[#706259]">
-                    Loading enrolled students...
-                  </td>
+                  <th className="py-3 px-4">Student Name</th>
+                  <th className="py-3 px-4">Student ID</th>
+                  <th className="py-3 px-4">Telegram Phone</th>
+                  <th className="py-3 px-4">Batch</th>
+                  <th className="py-3 px-4">Attendance Rate (%)</th>
+                  <th className="py-3 px-4 text-right">Instructor Status</th>
                 </tr>
-              ) : filteredStudents.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-6 text-center text-xs text-[#706259]">
-                    No students found matching your search.
-                  </td>
-                </tr>
-              ) : (
-                filteredStudents.map((student) => (
-                  <tr key={student.id} className="hover:bg-[#F9F6F0] transition-colors">
-                    <td className="py-3 px-4 font-bold text-[#2C221E] flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-[#F4EFE6] text-[#706259] flex items-center justify-center font-bold text-xs border border-[#EADBCE]">
-                        {student.fullName[0]}
-                      </div>
-                      {student.fullName}
-                    </td>
-                    <td className="py-3 px-4 font-mono text-[#706259]">{student.studentId}</td>
-                    <td className="py-3 px-4 font-mono text-[#706259]">{student.phoneNumber}</td>
-                    <td className="py-3 px-4 font-bold text-[#2C221E]">Year {student.batchYear}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`font-black text-sm ${
-                            student.attendanceRate >= 80 ? "text-[#1E7E53]" : "text-[#B83833]"
-                          }`}
-                        >
-                          {student.attendanceRate}%
-                        </span>
-                        <div className="w-20 h-1.5 bg-[#F4EFE6] rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              student.attendanceRate >= 80 ? "bg-[#1E7E53]" : "bg-[#B83833]"
-                            }`}
-                            style={{ width: `${student.attendanceRate}%` }}
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      {student.attendanceRate >= 80 ? (
-                        <span className="text-[11px] font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA]">
-                          Good Standing (≥80%)
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-black text-[#B83833] bg-[#FAEAE9] px-2.5 py-0.5 rounded-lg border border-[#F8D7DA] animate-pulse">
-                          ⚠️ Low Attendance (&lt;80%)
-                        </span>
-                      )}
+              </thead>
+              <tbody className="divide-y divide-[#EADBCE]">
+                {isLoadingRoster ? (
+                  <tr>
+                    <td colSpan={6} className="py-6 text-center text-xs text-[#706259]">
+                      Loading enrolled students...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : filteredStudents.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-6 text-center text-xs text-[#706259]">
+                      No students found matching your search.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredStudents.map((student) => (
+                    <tr key={student.id} className="hover:bg-[#F9F6F0] transition-colors">
+                      <td className="py-3 px-4 font-bold text-[#2C221E] flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-[#F4EFE6] text-[#706259] flex items-center justify-center font-bold text-xs border border-[#EADBCE]">
+                          {student.fullName[0]}
+                        </div>
+                        {student.fullName}
+                      </td>
+                      <td className="py-3 px-4 font-mono text-[#706259]">{student.studentId}</td>
+                      <td className="py-3 px-4 font-mono text-[#706259]">{student.phoneNumber}</td>
+                      <td className="py-3 px-4 font-bold text-[#2C221E]">Year {student.batchYear}</td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`font-black text-sm ${
+                              student.attendanceRate >= 80 ? "text-[#1E7E53]" : "text-[#B83833]"
+                            }`}
+                          >
+                            {student.attendanceRate}%
+                          </span>
+                          <div className="w-20 h-1.5 bg-[#F4EFE6] rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                student.attendanceRate >= 80 ? "bg-[#1E7E53]" : "bg-[#B83833]"
+                              }`}
+                              style={{ width: `${student.attendanceRate}%` }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        {student.attendanceRate >= 80 ? (
+                          <span className="text-[11px] font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA]">
+                            Good Standing (≥80%)
+                          </span>
+                        ) : (
+                          <span className="text-[11px] font-black text-[#B83833] bg-[#FAEAE9] px-2.5 py-0.5 rounded-lg border border-[#F8D7DA] animate-pulse">
+                            ⚠️ Low Attendance (&lt;80%)
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* MODAL 1: MANUAL STUDENT REGISTRATION */}
+      {/* TAB 3: TEACHING BATCHES (YEARS 1–5) */}
+      {activeInstructorTab === "batches" && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-1">
+            <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2">
+              <Layers className="w-5 h-5 text-[#B8860B]" />
+              Assigned Curriculum Courses Across Batches 1 to 5
+            </h3>
+            <p className="text-xs text-[#706259]">
+              All teaching assignments and scheduled time slots for Semester 1
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {assignedCourses.map((c) => (
+              <div
+                key={c.id}
+                onClick={() => {
+                  setSelectedBatchYear(c.batchYear);
+                  setSelectedCourseId(c.id);
+                  setActiveInstructorTab("session");
+                }}
+                className={`p-5 rounded-3xl border transition-all cursor-pointer hover:border-[#B8860B] shadow-sm ${
+                  selectedCourseId === c.id
+                    ? "bg-[#FFFFFF] border-[#B8860B] ring-2 ring-[#B8860B]/30"
+                    : "bg-[#FFFFFF] border-[#EADBCE]"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-[#B8860B] bg-[#FBF2DE] px-2.5 py-0.5 rounded-lg border border-[#B8860B]/30">
+                    Year {c.batchYear} Cohort
+                  </span>
+                  <span className="text-xs font-mono font-bold text-[#706259]">
+                    {c.studentsCount} Enrolled
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-[#2C221E] mt-2">{c.code}</h4>
+                <p className="text-xs text-[#706259] font-medium truncate">{c.title}</p>
+                <p className="text-[11px] text-[#B8860B] font-bold mt-3 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" /> {c.scheduleSlot}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: STUDENT REGISTRATION HUB */}
+      {activeInstructorTab === "register" && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-1">
+            <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-[#B8860B]" />
+              Student Registration & Whitelist Portal
+            </h3>
+            <p className="text-xs text-[#706259]">
+              Two convenient methods to register students for Year {selectedBatchYear}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Method 1: Manual Registration Card */}
+            <div className="warm-card p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#FBF2DE] text-[#B8860B] flex items-center justify-center">
+                  <UserPlus className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-[#2C221E]">Option 1: Manual Student Entry</h4>
+                  <p className="text-xs text-[#706259]">Register individual student with phone verification</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleManualStudentRegister} className="space-y-3 pt-2">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#706259]">Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Samuel Yohannes"
+                    value={newStudentName}
+                    onChange={(e) => setNewStudentName(e.target.value)}
+                    className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] focus:outline-none focus:border-[#B8860B]"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#706259]">Student ID</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. UGR/12345/16"
+                    value={newStudentId}
+                    onChange={(e) => setNewStudentId(e.target.value)}
+                    className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] focus:outline-none focus:border-[#B8860B]"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#706259]">Telegram-Linked Phone</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="+2519..."
+                    value={newStudentPhone}
+                    onChange={(e) => setNewStudentPhone(e.target.value)}
+                    className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-mono focus:outline-none focus:border-[#B8860B]"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmittingStudent}
+                  className="w-full py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  {isSubmittingStudent ? "Registering..." : "Register & Whitelist Student"}
+                </button>
+              </form>
+            </div>
+
+            {/* Method 2: Drag and Drop Upload Card */}
+            <div className="warm-card p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#E8F3EE] text-[#1E7E53] flex items-center justify-center">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#2C221E]">Option 2: Drag & Drop Spreadsheet</h4>
+                    <p className="text-xs text-[#706259]">Batch import student list from Excel or CSV</p>
+                  </div>
+                </div>
+
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
+                  }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleFileDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`p-8 border-2 border-dashed rounded-3xl text-center cursor-pointer transition-all flex flex-col items-center justify-center space-y-3 ${
+                    isDragging
+                      ? "border-[#B8860B] bg-[#FBF2DE] scale-[1.01]"
+                      : "border-[#EADBCE] bg-[#FFFFFF] hover:border-[#B8860B] shadow-sm"
+                  }`}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".csv,.xlsx,.xls"
+                    onChange={(e) => {
+                      const files = e.target.files;
+                      if (files && files.length > 0) processUploadFile(files[0]);
+                    }}
+                    className="hidden"
+                  />
+                  <div className="w-12 h-12 rounded-2xl bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30 flex items-center justify-center shadow-sm">
+                    <FileSpreadsheet className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-bold text-[#2C221E]">
+                      {uploadFileName ? `Selected: ${uploadFileName}` : "Drag & drop Excel or CSV file here, or click to browse"}
+                    </p>
+                    <p className="text-[11px] text-[#706259]">
+                      Columns: Full Name, Student ID, Phone Number
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-[#706259] bg-[#F4EFE6] p-3 rounded-xl">
+                💡 Imported records are instantly bound to Telegram identity verification for fraud-proof attendance.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+{/* MODAL 1: MANUAL STUDENT REGISTRATION */}
       {isManualStudentModalOpen && (
         <div className="fixed inset-0 bg-[#2C221E]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-2xl max-w-md w-full space-y-4 animate-in fade-in-50 zoom-in-95">
@@ -814,6 +1039,6 @@ export default function InstructorDashboard() {
           </div>
         </div>
       )}
-    </div>
+    </SidebarLayout>
   );
 }

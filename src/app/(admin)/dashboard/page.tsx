@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import SidebarLayout, { NavItem } from "@/components/layout/SidebarLayout";
 import Link from "next/link";
 import * as XLSX from "xlsx";
 import {
@@ -100,8 +101,8 @@ export default function DepartmentHeadDashboard() {
   const [selectedBatchFilter, setSelectedBatchFilter] = useState<number | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<
-    "atRisk" | "facultyOnboarding" | "courseAssignment" | "facultyCompliance" | "roster" | "upload"
-  >("atRisk");
+    "overview" | "atRisk" | "facultyOnboarding" | "courseAssignment" | "facultyCompliance" | "roster" | "upload"
+  >("overview");
 
   // Faculty Onboarding State
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([
@@ -628,8 +629,58 @@ export default function DepartmentHeadDashboard() {
     return matchesBatch && matchesQuery;
   });
 
+  const navItems: NavItem[] = [
+    {
+      id: "overview",
+      label: "Executive Dashboard",
+      icon: <Layers className="w-4 h-4" />,
+    },
+    {
+      id: "atRisk",
+      label: "Critical At-Risk Center",
+      icon: <AlertTriangle className="w-4 h-4" />,
+      badge: atRiskStudents.length,
+      badgeColor: "bg-[#FAEAE9] text-[#B83833]",
+    },
+    {
+      id: "facultyOnboarding",
+      label: "Faculty Onboarding & Invites",
+      icon: <GraduationCap className="w-4 h-4" />,
+      badge: facultyList.length,
+      badgeColor: "bg-[#FBF2DE] text-[#B8860B]",
+    },
+    {
+      id: "courseAssignment",
+      label: "Course Assignment Engine",
+      icon: <BookOpen className="w-4 h-4" />,
+    },
+    {
+      id: "facultyCompliance",
+      label: "Faculty Daily Compliance",
+      icon: <Clock className="w-4 h-4" />,
+    },
+    {
+      id: "roster",
+      label: "Master Roster & Excuses",
+      icon: <Users className="w-4 h-4" />,
+    },
+    {
+      id: "upload",
+      label: "Drag & Drop Whitelist",
+      icon: <Upload className="w-4 h-4" />,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F9F6F0] text-[#2C221E] p-6 md:p-10 max-w-7xl mx-auto space-y-8">
+    <SidebarLayout
+      portalTitle="Department Head Console"
+      portalSubtitle="Oversight & Faculty Hub"
+      userRoleLabel="DEPARTMENT HEAD"
+      userName="Dr. Yared Tadesse"
+      navItems={navItems}
+      activeItemId={activeTab}
+      onSelectItem={(id) => setActiveTab(id as any)}
+    >
       {/* Top Academic Context & Header */}
       <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-[#EADBCE] pb-6">
         <div className="flex items-start gap-4">
@@ -763,185 +814,186 @@ export default function DepartmentHeadDashboard() {
         </div>
       )}
 
-      {/* Primary KPI Metrics */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="warm-card p-5 space-y-2">
-          <span className="text-xs font-bold text-[#706259]">Overall Department Attendance</span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-black text-[#2C221E] tracking-tight">88.4%</span>
-            <span className="text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA]">
-              Good Standing
-            </span>
-          </div>
-          <div className="w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden">
-            <div className="h-full bg-[#1E7E53] rounded-full w-[88.4%]" />
-          </div>
-        </div>
-
-        <div className="warm-card p-5 space-y-2 border-l-4 border-l-[#B83833]">
-          <span className="text-xs font-bold text-[#706259]">Critical Risk Cohort (&lt;75%)</span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-black text-[#B83833] tracking-tight">
-              {atRiskStudents.length} Students
-            </span>
-            <span className="text-xs font-bold text-[#B83833] bg-[#FAEAE9] px-2.5 py-0.5 rounded-lg border border-[#F8D7DA]">
-              Action Required
-            </span>
-          </div>
-          <p className="text-[11px] text-[#706259] font-medium">Students falling below exam eligibility criteria</p>
-        </div>
-
-        <div className="warm-card p-5 space-y-2">
-          <span className="text-xs font-bold text-[#706259]">Onboarded Faculty Members</span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-black text-[#B8860B] tracking-tight">
-              {facultyList.length}
-            </span>
-            <span className="text-xs font-bold text-[#B8860B] bg-[#FBF2DE] px-2.5 py-0.5 rounded-lg border border-[#B8860B]/30">
-              Active Instructors
-            </span>
-          </div>
-          <p className="text-[11px] text-[#706259] font-medium">Credentials provisioned with Gmail invites</p>
-        </div>
-
-        <div className="warm-card p-5 space-y-2">
-          <span className="text-xs font-bold text-[#706259]">Total Whitelisted Students</span>
-          <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-black text-[#2C221E] tracking-tight">149</span>
-            <span className="text-xs font-bold text-[#706259] bg-[#F4EFE6] px-2.5 py-0.5 rounded-lg border border-[#EADBCE]">
-              Batches 1–5
-            </span>
-          </div>
-          <p className="text-[11px] text-[#1E7E53] font-bold flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#1E7E53]" /> 100% Telegram Bound
-          </p>
-        </div>
-      </section>
-
-      {/* 5-BATCH COHORT HEALTH MATRIX (Years 1 to 5) */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs font-black text-[#706259] uppercase tracking-wider">
-            5-Year Batch Cohort Matrix • Semester {selectedSemester} Overview
-          </h2>
-          <span className="text-xs text-[#706259] font-medium">Click batch cards to filter table</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          {batches.map((b) => (
-            <div
-              key={b.year}
-              onClick={() => setSelectedBatchFilter(selectedBatchFilter === b.year ? "ALL" : b.year)}
-              className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                selectedBatchFilter === b.year
-                  ? "bg-[#FFFFFF] border-[#B8860B] ring-2 ring-[#B8860B]/30 shadow-md"
-                  : "bg-[#FFFFFF] border-[#EADBCE] hover:border-[#B8860B] shadow-sm"
-              }`}
-            >
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-[#2C221E]">{b.name}</span>
-                <span
-                  className={`font-black px-2 py-0.5 rounded-lg text-xs ${
-                    b.rate >= 85
-                      ? "text-[#1E7E53] bg-[#E8F3EE]"
-                      : b.rate >= 75
-                      ? "text-[#B8860B] bg-[#FBF2DE]"
-                      : "text-[#B83833] bg-[#FAEAE9]"
-                  }`}
-                >
-                  {b.rate}%
+      {/* OVERVIEW VIEW (Executive KPI Metrics & 5-Batch Cohort Health Matrix) */}
+      {activeTab === "overview" && (
+        <div className="space-y-8 animate-in fade-in duration-200">
+          {/* Primary KPI Metrics */}
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="warm-card p-5 space-y-2">
+              <span className="text-xs font-bold text-[#706259]">Overall Department Attendance</span>
+              <div className="flex items-baseline justify-between">
+                <span className="text-3xl font-black text-[#2C221E] tracking-tight">88.4%</span>
+                <span className="text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA]">
+                  Good Standing
                 </span>
               </div>
-
-              <div className="my-2.5 w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full ${
-                    b.rate >= 85 ? "bg-[#1E7E53]" : b.rate >= 75 ? "bg-[#B8860B]" : "bg-[#B83833]"
-                  }`}
-                  style={{ width: `${b.rate}%` }}
-                />
-              </div>
-
-              <div className="flex items-center justify-between text-[11px] text-[#706259] font-medium">
-                <span>{b.total} Students</span>
-                <span className={b.atRisk > 0 ? "text-[#B83833] font-bold" : "text-[#706259]"}>
-                  {b.atRisk} At Risk
-                </span>
+              <div className="w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden">
+                <div className="h-full bg-[#1E7E53] rounded-full w-[88.4%]" />
               </div>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Main Feature Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-[#EADBCE] pb-3">
-        <button
-          onClick={() => setActiveTab("atRisk")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-            activeTab === "atRisk"
-              ? "bg-[#B83833] text-white shadow-md"
-              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
-          }`}
-        >
-          <AlertTriangle className="w-4 h-4" />
-          Critical At-Risk Center ({atRiskStudents.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("facultyOnboarding")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-            activeTab === "facultyOnboarding"
-              ? "btn-ochre shadow-md"
-              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
-          }`}
-        >
-          <GraduationCap className="w-4 h-4" />
-          Faculty Onboarding & Gmail Invites ({facultyList.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("courseAssignment")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-            activeTab === "courseAssignment"
-              ? "btn-ochre shadow-md"
-              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
-          }`}
-        >
-          <BookOpen className="w-4 h-4" />
-          Course Assignment Engine
-        </button>
-        <button
-          onClick={() => setActiveTab("facultyCompliance")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-            activeTab === "facultyCompliance"
-              ? "btn-ochre shadow-md"
-              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
-          }`}
-        >
-          <Clock className="w-4 h-4" />
-          Faculty Daily Compliance
-        </button>
-        <button
-          onClick={() => setActiveTab("roster")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-            activeTab === "roster"
-              ? "btn-ochre shadow-md"
-              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          Master Roster & Excuses
-        </button>
-        <button
-          onClick={() => setActiveTab("upload")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-            activeTab === "upload"
-              ? "btn-ochre shadow-md"
-              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
-          }`}
-        >
-          <Upload className="w-4 h-4" />
-          Drag & Drop Whitelist
-        </button>
-      </div>
+            <div className="warm-card p-5 space-y-2 border-l-4 border-l-[#B83833]">
+              <span className="text-xs font-bold text-[#706259]">Critical Risk Cohort (&lt;75%)</span>
+              <div className="flex items-baseline justify-between">
+                <span className="text-3xl font-black text-[#B83833] tracking-tight">
+                  {atRiskStudents.length} Students
+                </span>
+                <span className="text-xs font-bold text-[#B83833] bg-[#FAEAE9] px-2.5 py-0.5 rounded-lg border border-[#F8D7DA]">
+                  Action Required
+                </span>
+              </div>
+              <p className="text-[11px] text-[#706259] font-medium">Students falling below exam eligibility criteria</p>
+            </div>
+
+            <div className="warm-card p-5 space-y-2">
+              <span className="text-xs font-bold text-[#706259]">Onboarded Faculty Members</span>
+              <div className="flex items-baseline justify-between">
+                <span className="text-3xl font-black text-[#B8860B] tracking-tight">
+                  {facultyList.length}
+                </span>
+                <span className="text-xs font-bold text-[#B8860B] bg-[#FBF2DE] px-2.5 py-0.5 rounded-lg border border-[#B8860B]/30">
+                  Active Instructors
+                </span>
+              </div>
+              <p className="text-[11px] text-[#706259] font-medium">Credentials provisioned with Gmail invites</p>
+            </div>
+
+            <div className="warm-card p-5 space-y-2">
+              <span className="text-xs font-bold text-[#706259]">Total Whitelisted Students</span>
+              <div className="flex items-baseline justify-between">
+                <span className="text-3xl font-black text-[#2C221E] tracking-tight">149</span>
+                <span className="text-xs font-bold text-[#706259] bg-[#F4EFE6] px-2.5 py-0.5 rounded-lg border border-[#EADBCE]">
+                  Batches 1–5
+                </span>
+              </div>
+              <p className="text-[11px] text-[#1E7E53] font-bold flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#1E7E53]" /> 100% Telegram Bound
+              </p>
+            </div>
+          </section>
+
+          {/* 5-BATCH COHORT HEALTH MATRIX (Years 1 to 5) */}
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-black text-[#706259] uppercase tracking-wider">
+                5-Year Batch Cohort Matrix • Semester {selectedSemester} Overview
+              </h2>
+              <span className="text-xs text-[#706259] font-medium">Click batch cards to inspect cohort</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              {batches.map((b) => (
+                <div
+                  key={b.year}
+                  onClick={() => {
+                    setSelectedBatchFilter(selectedBatchFilter === b.year ? "ALL" : b.year);
+                    setActiveTab("roster");
+                  }}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all hover:scale-[1.02] ${
+                    selectedBatchFilter === b.year
+                      ? "bg-[#FFFFFF] border-[#B8860B] ring-2 ring-[#B8860B]/30 shadow-md"
+                      : "bg-[#FFFFFF] border-[#EADBCE] hover:border-[#B8860B] shadow-sm"
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-[#2C221E]">{b.name}</span>
+                    <span
+                      className={`font-black px-2 py-0.5 rounded-lg text-xs ${
+                        b.rate >= 85
+                          ? "text-[#1E7E53] bg-[#E8F3EE]"
+                          : b.rate >= 75
+                          ? "text-[#B8860B] bg-[#FBF2DE]"
+                          : "text-[#B83833] bg-[#FAEAE9]"
+                      }`}
+                    >
+                      {b.rate}%
+                    </span>
+                  </div>
+
+                  <div className="my-2.5 w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        b.rate >= 85 ? "bg-[#1E7E53]" : b.rate >= 75 ? "bg-[#B8860B]" : "bg-[#B83833]"
+                      }`}
+                      style={{ width: `${b.rate}%` }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] text-[#706259] font-medium">
+                    <span>{b.total} Students</span>
+                    <span className={b.atRisk > 0 ? "text-[#B83833] font-bold" : "text-[#706259]"}>
+                      {b.atRisk} At Risk
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Quick Action Navigation Tiles */}
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div
+              onClick={() => setActiveTab("atRisk")}
+              className="p-5 rounded-3xl bg-[#FAEAE9] border border-[#F8D7DA] hover:border-[#B83833] cursor-pointer transition-all space-y-2 group shadow-sm"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-xl bg-[#FFFFFF] text-[#B83833] flex items-center justify-center shadow-sm">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-black text-[#B83833] bg-[#FFFFFF] px-2.5 py-0.5 rounded-lg">
+                  {atRiskStudents.length} Students
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-[#2C221E] group-hover:text-[#B83833] transition-colors">
+                Critical At-Risk Action Center
+              </h3>
+              <p className="text-xs text-[#706259]">
+                View exam bar alerts, contact students directly by phone, or broadcast official Telegram warnings.
+              </p>
+            </div>
+
+            <div
+              onClick={() => setActiveTab("facultyOnboarding")}
+              className="p-5 rounded-3xl bg-[#FBF2DE] border border-[#B8860B]/30 hover:border-[#B8860B] cursor-pointer transition-all space-y-2 group shadow-sm"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-xl bg-[#FFFFFF] text-[#B8860B] flex items-center justify-center shadow-sm">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-black text-[#B8860B] bg-[#FFFFFF] px-2.5 py-0.5 rounded-lg">
+                  {facultyList.length} Active
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-[#2C221E] group-hover:text-[#B8860B] transition-colors">
+                Faculty Onboarding & Invites
+              </h3>
+              <p className="text-xs text-[#706259]">
+                Add new faculty members, generate temporary credentials, and dispatch automated Gmail invitations.
+              </p>
+            </div>
+
+            <div
+              onClick={() => setActiveTab("courseAssignment")}
+              className="p-5 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] cursor-pointer transition-all space-y-2 group shadow-sm"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-xl bg-[#FBF2DE] text-[#B8860B] flex items-center justify-center shadow-sm">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-black text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg">
+                  {coursesList.length} Courses
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-[#2C221E] group-hover:text-[#B8860B] transition-colors">
+                Course Assignment Engine
+              </h3>
+              <p className="text-xs text-[#706259]">
+                Assign faculty instructors to curriculum courses across Year 1 through Year 5 cohorts.
+              </p>
+            </div>
+          </section>
+        </div>
+      )}
 
       {/* TAB 1: CRITICAL AT-RISK ACTION CENTER */}
       {activeTab === "atRisk" && (
@@ -1791,6 +1843,6 @@ export default function DepartmentHeadDashboard() {
           </div>
         </div>
       )}
-    </div>
+    </SidebarLayout>
   );
 }
