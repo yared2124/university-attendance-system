@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import * as XLSX from "xlsx";
 import {
@@ -30,6 +30,10 @@ import {
   ChevronDown,
   BookOpen,
   Check,
+  UserPlus,
+  Mail,
+  Layers,
+  Key,
 } from "lucide-react";
 
 interface StudentRow {
@@ -66,6 +70,26 @@ interface FacultyComplianceRow {
   totalEnrolled: number;
 }
 
+interface FacultyMember {
+  id: string;
+  fullName: string;
+  email?: string;
+  phoneNumber: string;
+  staffId?: string;
+  department?: string;
+  role: string;
+}
+
+interface CourseItem {
+  id: string;
+  courseCode: string;
+  title: string;
+  batchYear: number;
+  semester: 1 | 2;
+  instructorIds: string[];
+  scheduleSlot?: string;
+}
+
 export default function DepartmentHeadDashboard() {
   // Institution & Department Selection
   const [selectedDepartment, setSelectedDepartment] = useState("Software Engineering");
@@ -75,7 +99,112 @@ export default function DepartmentHeadDashboard() {
   const [selectedSemester, setSelectedSemester] = useState<1 | 2>(1);
   const [selectedBatchFilter, setSelectedBatchFilter] = useState<number | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"atRisk" | "facultyCompliance" | "roster" | "upload">("atRisk");
+  const [activeTab, setActiveTab] = useState<
+    "atRisk" | "facultyOnboarding" | "courseAssignment" | "facultyCompliance" | "roster" | "upload"
+  >("atRisk");
+
+  // Faculty Onboarding State
+  const [facultyList, setFacultyList] = useState<FacultyMember[]>([
+    {
+      id: "inst_1",
+      fullName: "Dr. Yared Tadesse",
+      email: "head@injibara.edu.et",
+      phoneNumber: "+251911000001",
+      staffId: "STAFF/SE/001",
+      department: "Software Engineering",
+      role: "DEPT_HEAD",
+    },
+    {
+      id: "inst_2",
+      fullName: "Eng. Alazar Tesfaye",
+      email: "alazar.t@injibara.edu.et",
+      phoneNumber: "+251911000002",
+      staffId: "STAFF/SE/102",
+      department: "Software Engineering",
+      role: "INSTRUCTOR",
+    },
+    {
+      id: "inst_3",
+      fullName: "Dr. Bethlehem Girma",
+      email: "bethlehem.g@injibara.edu.et",
+      phoneNumber: "+251911000003",
+      staffId: "STAFF/SE/103",
+      department: "Software Engineering",
+      role: "INSTRUCTOR",
+    },
+  ]);
+  const [isAddFacultyModalOpen, setIsAddFacultyModalOpen] = useState(false);
+  const [newFacultyName, setNewFacultyName] = useState("");
+  const [newFacultyEmail, setNewFacultyEmail] = useState("");
+  const [newFacultyPhone, setNewFacultyPhone] = useState("");
+  const [newFacultyStaffId, setNewFacultyStaffId] = useState("");
+  const [newFacultyTempPass, setNewFacultyTempPass] = useState("Injibara@2026");
+  const [isSubmittingFaculty, setIsSubmittingFaculty] = useState(false);
+  const [gmailSentBanner, setGmailSentBanner] = useState<string | null>(null);
+
+  // Course Assignment State
+  const [coursesList, setCoursesList] = useState<CourseItem[]>([
+    {
+      id: "course_4",
+      courseCode: "SEng1101",
+      title: "Introduction to Software Engineering",
+      batchYear: 1,
+      semester: 1,
+      instructorIds: ["inst_1"],
+      scheduleSlot: "Mon/Wed 08:30 - 10:00",
+    },
+    {
+      id: "course_8",
+      courseCode: "SEng1103",
+      title: "Structured Programming Fundamentals",
+      batchYear: 1,
+      semester: 1,
+      instructorIds: ["inst_2"],
+      scheduleSlot: "Tue/Thu 10:30 - 12:00",
+    },
+    {
+      id: "course_3",
+      courseCode: "SEng2104",
+      title: "Data Structures & Algorithms",
+      batchYear: 2,
+      semester: 1,
+      instructorIds: ["inst_3"],
+      scheduleSlot: "Tue/Thu 08:30 - 10:00",
+    },
+    {
+      id: "course_7",
+      courseCode: "SEng2202",
+      title: "Object-Oriented Design & Programming",
+      batchYear: 2,
+      semester: 2,
+      instructorIds: ["inst_1", "inst_3"],
+      scheduleSlot: "Mon/Wed 14:00 - 15:30",
+    },
+    {
+      id: "course_1",
+      courseCode: "SEng3112",
+      title: "Software Requirements Engineering",
+      batchYear: 3,
+      semester: 1,
+      instructorIds: ["inst_1", "inst_2"],
+      scheduleSlot: "Mon/Wed 08:30 - 10:00",
+    },
+    {
+      id: "course_6",
+      courseCode: "SEng3201",
+      title: "Software Architecture & Design Patterns",
+      batchYear: 3,
+      semester: 1,
+      instructorIds: ["inst_1"],
+      scheduleSlot: "Tue/Thu 10:30 - 12:00",
+    },
+  ]);
+  const [assignTargetBatch, setAssignTargetBatch] = useState<number>(2);
+  const [assignTargetCourseId, setAssignTargetCourseId] = useState<string>("course_7");
+  const [assignSelectedInstructorId, setAssignSelectedInstructorId] = useState<string>("inst_1");
+  const [assignScheduleSlot, setAssignScheduleSlot] = useState<string>("Mon/Wed 08:30 - 10:00 AM");
+  const [isAssigning, setIsAssigning] = useState(false);
+  const [assignmentSuccessMsg, setAssignmentSuccessMsg] = useState<string | null>(null);
 
   // Roster Drag & Drop State
   const [isDragging, setIsDragging] = useState(false);
@@ -235,6 +364,80 @@ export default function DepartmentHeadDashboard() {
       attendanceRate: 85,
     },
   ]);
+
+  // Handle Faculty Onboarding Submission
+  const handleRegisterFaculty = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingFaculty(true);
+    setGmailSentBanner(null);
+
+    try {
+      const res = await fetch("/api/admin/faculty", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: newFacultyName,
+          email: newFacultyEmail,
+          phoneNumber: newFacultyPhone,
+          staffId: newFacultyStaffId,
+          department: selectedDepartment,
+          temporaryPassword: newFacultyTempPass,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.faculty) {
+        setFacultyList((prev) => [...prev, data.faculty]);
+        setGmailSentBanner(
+          `✉️ Official welcome email & login credentials dispatched via Gmail to ${newFacultyEmail} (Staff ID: ${newFacultyStaffId}, Initial Password: ${newFacultyTempPass}).`
+        );
+        setIsAddFacultyModalOpen(false);
+        setNewFacultyName("");
+        setNewFacultyEmail("");
+        setNewFacultyPhone("");
+        setNewFacultyStaffId("");
+      }
+    } catch {
+      alert("Failed to onboard faculty member.");
+    } finally {
+      setIsSubmittingFaculty(false);
+    }
+  };
+
+  // Handle Course Assignment Submission
+  const handleAssignCourse = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsAssigning(true);
+    setAssignmentSuccessMsg(null);
+
+    try {
+      const res = await fetch("/api/admin/courses/assign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId: assignTargetCourseId,
+          instructorId: assignSelectedInstructorId,
+          scheduleSlot: assignScheduleSlot,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.course) {
+        setCoursesList((prev) =>
+          prev.map((c) => (c.id === data.course.id ? data.course : c))
+        );
+        const inst = facultyList.find((f) => f.id === assignSelectedInstructorId);
+        setAssignmentSuccessMsg(
+          `✅ Successfully assigned ${data.course.courseCode} (${data.course.title}) to ${inst?.fullName || "Instructor"} for slot: ${assignScheduleSlot}.`
+        );
+        setTimeout(() => setAssignmentSuccessMsg(null), 5000);
+      }
+    } catch {
+      alert("Failed to assign course.");
+    } finally {
+      setIsAssigning(false);
+    }
+  };
 
   // Handle Drag & Drop File Parsing
   const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -488,7 +691,7 @@ export default function DepartmentHeadDashboard() {
               Department Head Console • {selectedDepartment}
             </h1>
             <p className="text-xs text-[#706259] font-medium">
-              Academic Cohort Oversight, Telegram Bot Broadcasts, Faculty Compliance & Roster Control
+              Academic Cohort Oversight, Faculty Onboarding, Course Assignment & Roster Whitelisting
             </p>
           </div>
         </div>
@@ -496,11 +699,18 @@ export default function DepartmentHeadDashboard() {
         {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-3">
           <button
+            onClick={() => setIsAddFacultyModalOpen(true)}
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all"
+          >
+            <UserPlus className="w-4 h-4 text-[#B8860B]" />
+            Onboard Faculty Member
+          </button>
+          <button
             onClick={() => setIsBroadcastModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2.5 bg-[#FAEAE9] border border-[#F8D7DA] hover:bg-[#F8D7DA] text-[#B83833] font-bold text-xs rounded-xl shadow-sm transition-all"
           >
             <AlertOctagon className="w-4 h-4 text-[#B83833]" />
-            Send Broadcast Warning
+            Broadcast Warning
           </button>
           <a
             href={`/api/admin/export?batchYear=${selectedBatchFilter === "ALL" ? 3 : selectedBatchFilter}`}
@@ -518,6 +728,22 @@ export default function DepartmentHeadDashboard() {
           </Link>
         </div>
       </header>
+
+      {/* Gmail Dispatched Notification Banner */}
+      {gmailSentBanner && (
+        <div className="p-4 rounded-2xl bg-[#E8F3EE] border border-[#C2E8CA] text-[#1E7E53] flex items-center justify-between animate-in fade-in-50">
+          <div className="flex items-center gap-3 text-xs font-bold">
+            <Mail className="w-4 h-4 text-[#1E7E53] shrink-0" />
+            <span>{gmailSentBanner}</span>
+          </div>
+          <button
+            onClick={() => setGmailSentBanner(null)}
+            className="text-[#1E7E53] hover:text-[#166542]"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Dispatched Notification Success Banner */}
       {dispatchedSuccessStudent && (
@@ -566,14 +792,16 @@ export default function DepartmentHeadDashboard() {
         </div>
 
         <div className="warm-card p-5 space-y-2">
-          <span className="text-xs font-bold text-[#706259]">Active Lecture Sessions</span>
+          <span className="text-xs font-bold text-[#706259]">Onboarded Faculty Members</span>
           <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-black text-[#B8860B] tracking-tight">1</span>
+            <span className="text-3xl font-black text-[#B8860B] tracking-tight">
+              {facultyList.length}
+            </span>
             <span className="text-xs font-bold text-[#B8860B] bg-[#FBF2DE] px-2.5 py-0.5 rounded-lg border border-[#B8860B]/30">
-              SEng3112 Live
+              Active Instructors
             </span>
           </div>
-          <p className="text-[11px] text-[#706259] font-medium">Dynamic 15s QR + In-class manual mark cap active</p>
+          <p className="text-[11px] text-[#706259] font-medium">Credentials provisioned with Gmail invites</p>
         </div>
 
         <div className="warm-card p-5 space-y-2">
@@ -659,6 +887,28 @@ export default function DepartmentHeadDashboard() {
           Critical At-Risk Center ({atRiskStudents.length})
         </button>
         <button
+          onClick={() => setActiveTab("facultyOnboarding")}
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+            activeTab === "facultyOnboarding"
+              ? "btn-ochre shadow-md"
+              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
+          }`}
+        >
+          <GraduationCap className="w-4 h-4" />
+          Faculty Onboarding & Gmail Invites ({facultyList.length})
+        </button>
+        <button
+          onClick={() => setActiveTab("courseAssignment")}
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+            activeTab === "courseAssignment"
+              ? "btn-ochre shadow-md"
+              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
+          }`}
+        >
+          <BookOpen className="w-4 h-4" />
+          Course Assignment Engine
+        </button>
+        <button
           onClick={() => setActiveTab("facultyCompliance")}
           className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === "facultyCompliance"
@@ -667,7 +917,7 @@ export default function DepartmentHeadDashboard() {
           }`}
         >
           <Clock className="w-4 h-4" />
-          Faculty Daily Compliance Monitor
+          Faculty Daily Compliance
         </button>
         <button
           onClick={() => setActiveTab("roster")}
@@ -678,7 +928,7 @@ export default function DepartmentHeadDashboard() {
           }`}
         >
           <Users className="w-4 h-4" />
-          Master Student Roster & Excuses
+          Master Roster & Excuses
         </button>
         <button
           onClick={() => setActiveTab("upload")}
@@ -689,7 +939,7 @@ export default function DepartmentHeadDashboard() {
           }`}
         >
           <Upload className="w-4 h-4" />
-          Drag & Drop Whitelist Ingestion (Excel/CSV)
+          Drag & Drop Whitelist
         </button>
       </div>
 
@@ -761,7 +1011,6 @@ export default function DepartmentHeadDashboard() {
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {/* 1. Direct Phone Call Button */}
                         <a
                           href={`tel:${s.phoneNumber}`}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E8F3EE] hover:bg-[#C2E8CA] text-[#1E7E53] border border-[#C2E8CA] font-bold text-xs transition-colors"
@@ -770,8 +1019,6 @@ export default function DepartmentHeadDashboard() {
                           <Phone className="w-3.5 h-3.5" />
                           Call
                         </a>
-
-                        {/* 2. Direct Telegram Warning Button */}
                         <button
                           disabled={alertingStudentId === s.id}
                           onClick={() => handleSendTelegramWarning(s)}
@@ -790,7 +1037,202 @@ export default function DepartmentHeadDashboard() {
         </section>
       )}
 
-      {/* TAB 2: FACULTY DAILY COMPLIANCE MONITOR */}
+      {/* TAB 2: FACULTY ONBOARDING & GMAIL CREDENTIALS DISPATCH */}
+      {activeTab === "facultyOnboarding" && (
+        <section className="space-y-4">
+          <div className="p-5 rounded-3xl bg-[#FBF2DE] border border-[#B8860B]/30 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+            <div className="space-y-1">
+              <h3 className="text-sm font-black text-[#2C221E] flex items-center gap-2">
+                <GraduationCap className="w-5 h-5 text-[#B8860B]" />
+                Faculty Staff Directory & Gmail Invitation Dispatch
+              </h3>
+              <p className="text-xs text-[#706259]">
+                Register academic instructors, assign institutional Staff IDs, and automatically dispatch login credentials via Gmail.
+              </p>
+            </div>
+            <button
+              onClick={() => setIsAddFacultyModalOpen(true)}
+              className="px-4 py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all shrink-0 flex items-center gap-2"
+            >
+              <UserPlus className="w-4 h-4" /> Add New Faculty Member
+            </button>
+          </div>
+
+          <div className="overflow-x-auto rounded-3xl border border-[#EADBCE] bg-[#FFFFFF] shadow-sm">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
+                <tr>
+                  <th className="py-3 px-4">Faculty Member</th>
+                  <th className="py-3 px-4">Staff ID</th>
+                  <th className="py-3 px-4">Gmail / Institutional Email</th>
+                  <th className="py-3 px-4">Phone Number</th>
+                  <th className="py-3 px-4">Department</th>
+                  <th className="py-3 px-4 text-right">Account Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#EADBCE]">
+                {facultyList.map((f) => (
+                  <tr key={f.id} className="hover:bg-[#F9F6F0] transition-colors">
+                    <td className="py-3 px-4 font-bold text-[#2C221E] flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30 flex items-center justify-center font-bold text-xs">
+                        {f.fullName[0]}
+                      </div>
+                      <div>
+                        <p>{f.fullName}</p>
+                        <span className="text-[10px] text-[#706259] font-normal">{f.role}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 font-mono font-bold text-[#B8860B]">{f.staffId || "STAFF/SE/---"}</td>
+                    <td className="py-3 px-4 font-mono text-[#2C221E]">{f.email || "—"}</td>
+                    <td className="py-3 px-4 font-mono text-[#706259]">{f.phoneNumber}</td>
+                    <td className="py-3 px-4 text-[#706259]">{f.department || selectedDepartment}</td>
+                    <td className="py-3 px-4 text-right">
+                      <span className="text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA] inline-flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Credentials Active
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* TAB 3: COURSE ASSIGNMENT ENGINE */}
+      {activeTab === "courseAssignment" && (
+        <section className="space-y-6">
+          <div className="p-5 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-sm space-y-4">
+            <div className="space-y-1 border-b border-[#EADBCE] pb-3">
+              <h3 className="text-sm font-black text-[#2C221E] flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-[#B8860B]" />
+                Assign Faculty to Courses & Schedule Slots
+              </h3>
+              <p className="text-xs text-[#706259]">
+                Select the target batch and semester to link registered instructors to curriculum courses.
+              </p>
+            </div>
+
+            {assignmentSuccessMsg && (
+              <div className="p-3.5 rounded-xl bg-[#E8F3EE] border border-[#C2E8CA] text-[#1E7E53] text-xs font-bold flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{assignmentSuccessMsg}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleAssignCourse} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#706259]">1. Batch Cohort</label>
+                <select
+                  value={assignTargetBatch}
+                  onChange={(e) => setAssignTargetBatch(Number(e.target.value))}
+                  className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2.5 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
+                >
+                  <option value={1}>Year 1 (Freshman)</option>
+                  <option value={2}>Year 2 (Sophomore)</option>
+                  <option value={3}>Year 3 (Junior)</option>
+                  <option value={4}>Year 4 (Senior)</option>
+                  <option value={5}>Year 5 (Finalists)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#706259]">2. Course to Assign</label>
+                <select
+                  value={assignTargetCourseId}
+                  onChange={(e) => setAssignTargetCourseId(e.target.value)}
+                  className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2.5 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
+                >
+                  {coursesList
+                    .filter((c) => c.batchYear === assignTargetBatch)
+                    .map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.courseCode} - {c.title}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#706259]">3. Primary Instructor</label>
+                <select
+                  value={assignSelectedInstructorId}
+                  onChange={(e) => setAssignSelectedInstructorId(e.target.value)}
+                  className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2.5 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
+                >
+                  {facultyList.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.fullName} ({f.staffId || f.role})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#706259]">4. Scheduled Class Slot</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={assignScheduleSlot}
+                    onChange={(e) => setAssignScheduleSlot(e.target.value)}
+                    placeholder="e.g. Mon/Wed 08:30 - 10:00 AM"
+                    className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isAssigning}
+                    className="px-4 py-2 btn-ochre text-white font-bold text-xs rounded-xl shadow-md shrink-0 transition-all disabled:opacity-50"
+                  >
+                    {isAssigning ? "Assigning..." : "Assign"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          {/* Current Assignments Table */}
+          <div className="space-y-2">
+            <h4 className="text-xs font-bold text-[#706259] uppercase tracking-wider">
+              Current Faculty Course Assignments (Year {assignTargetBatch})
+            </h4>
+            <div className="overflow-x-auto rounded-3xl border border-[#EADBCE] bg-[#FFFFFF] shadow-sm">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
+                  <tr>
+                    <th className="py-3 px-4">Course Code</th>
+                    <th className="py-3 px-4">Course Title</th>
+                    <th className="py-3 px-4">Batch</th>
+                    <th className="py-3 px-4">Semester</th>
+                    <th className="py-3 px-4">Assigned Instructor</th>
+                    <th className="py-3 px-4">Lecture Slot</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#EADBCE]">
+                  {coursesList
+                    .filter((c) => c.batchYear === assignTargetBatch)
+                    .map((c) => {
+                      const instructor = facultyList.find((f) => c.instructorIds.includes(f.id));
+                      return (
+                        <tr key={c.id} className="hover:bg-[#F9F6F0]">
+                          <td className="py-3 px-4 font-mono font-bold text-[#B8860B]">{c.courseCode}</td>
+                          <td className="py-3 px-4 font-bold text-[#2C221E]">{c.title}</td>
+                          <td className="py-3 px-4">Year {c.batchYear}</td>
+                          <td className="py-3 px-4">Sem {c.semester}</td>
+                          <td className="py-3 px-4 font-bold text-[#1E7E53]">
+                            {instructor ? instructor.fullName : "Unassigned"}
+                          </td>
+                          <td className="py-3 px-4 font-mono text-[#706259]">{c.scheduleSlot || "Not scheduled"}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* TAB 4: FACULTY DAILY COMPLIANCE MONITOR */}
       {activeTab === "facultyCompliance" && (
         <section className="space-y-4">
           <div className="p-5 rounded-3xl bg-[#FBF2DE] border border-[#B8860B]/30 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
@@ -869,7 +1311,7 @@ export default function DepartmentHeadDashboard() {
         </section>
       )}
 
-      {/* TAB 3: FULL ATTENDANCE ROSTER & EXCUSE LOG */}
+      {/* TAB 5: FULL ATTENDANCE ROSTER & EXCUSE LOG */}
       {activeTab === "roster" && (
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -976,7 +1418,7 @@ export default function DepartmentHeadDashboard() {
         </section>
       )}
 
-      {/* TAB 4: DRAG & DROP ROSTER INGESTION */}
+      {/* TAB 6: DRAG & DROP ROSTER INGESTION */}
       {activeTab === "upload" && (
         <section className="space-y-6">
           <div className="space-y-1">
@@ -1105,6 +1547,111 @@ export default function DepartmentHeadDashboard() {
             </div>
           )}
         </section>
+      )}
+
+      {/* ONBOARD FACULTY MODAL (WITH GMAIL DISPATCH) */}
+      {isAddFacultyModalOpen && (
+        <div className="fixed inset-0 bg-[#2C221E]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-2xl max-w-lg w-full space-y-5 animate-in fade-in-50 zoom-in-95">
+            <div className="flex items-start justify-between">
+              <div className="space-y-0.5">
+                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2">
+                  <UserPlus className="w-5 h-5 text-[#B8860B]" />
+                  Onboard Faculty & Dispatch Gmail Invitation
+                </h3>
+                <p className="text-xs text-[#706259]">
+                  Provision institutional credentials. An automated invitation with Staff ID and password will be sent to the instructor's email.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsAddFacultyModalOpen(false)}
+                className="p-1 rounded-xl text-[#706259] hover:text-[#2C221E] hover:bg-[#F4EFE6]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRegisterFaculty} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#706259]">Full Name <span className="text-[#B83833]">*</span></label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Dr. Abebaw Haile"
+                  value={newFacultyName}
+                  onChange={(e) => setNewFacultyName(e.target.value)}
+                  className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] focus:outline-none focus:border-[#B8860B]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-[#706259]">Staff ID <span className="text-[#B83833]">*</span></label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="STAFF/SE/105"
+                    value={newFacultyStaffId}
+                    onChange={(e) => setNewFacultyStaffId(e.target.value)}
+                    className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-mono focus:outline-none focus:border-[#B8860B]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-[#706259]">Phone Number <span className="text-[#B83833]">*</span></label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="+251911223344"
+                    value={newFacultyPhone}
+                    onChange={(e) => setNewFacultyPhone(e.target.value)}
+                    className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-mono focus:outline-none focus:border-[#B8860B]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#706259]">Gmail / Institutional Email <span className="text-[#B83833]">*</span></label>
+                <input
+                  type="email"
+                  required
+                  placeholder="abebaw.h@injibara.edu.et"
+                  value={newFacultyEmail}
+                  onChange={(e) => setNewFacultyEmail(e.target.value)}
+                  className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-mono focus:outline-none focus:border-[#B8860B]"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#706259]">Initial / Temporary Password</label>
+                <input
+                  type="text"
+                  value={newFacultyTempPass}
+                  onChange={(e) => setNewFacultyTempPass(e.target.value)}
+                  className="w-full bg-[#F4EFE6] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-mono focus:outline-none focus:border-[#B8860B]"
+                />
+                <p className="text-[10px] text-[#706259]">Instructor will be prompted to change password upon first login.</p>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#EADBCE]">
+                <button
+                  type="button"
+                  onClick={() => setIsAddFacultyModalOpen(false)}
+                  className="px-4 py-2 text-xs font-bold text-[#706259] hover:text-[#2C221E]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingFaculty}
+                  className="px-5 py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50 flex items-center gap-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  {isSubmittingFaculty ? "Dispatching..." : "Send Gmail Invite & Register"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
       {/* BROADCAST AT-RISK WARNING MODAL */}

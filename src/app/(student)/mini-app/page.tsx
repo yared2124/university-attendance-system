@@ -21,6 +21,9 @@ import {
   FileText,
   Info,
   Eye,
+  X,
+  TrendingUp,
+  AlertTriangle,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -40,6 +43,15 @@ declare global {
   }
 }
 
+interface CourseAttendanceStanding {
+  courseId: string;
+  courseCode: string;
+  courseTitle: string;
+  attendanceRate: number;
+  isGoodStanding: boolean;
+  statusLabel: string;
+}
+
 export default function StudentMiniApp() {
   const [activeTab, setActiveTab] = useState<"qr" | "passcode">("qr");
   const [passcode, setPasscode] = useState("");
@@ -49,6 +61,11 @@ export default function StudentMiniApp() {
     message: string;
     details?: string;
   } | null>(null);
+
+  // Course Breakdown Modal State
+  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
+  const [courseStandings, setCourseStandings] = useState<CourseAttendanceStanding[]>([]);
+  const [overallRate, setOverallRate] = useState(91);
 
   const [studentInfo] = useState({
     fullName: "Abebe Kebede",
@@ -60,6 +77,23 @@ export default function StudentMiniApp() {
   });
 
   const simulatedSessionId = "sess_active_1";
+
+  // Fetch course attendance breakdown
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await fetch(`/api/student/courses?studentId=${studentInfo.studentId}`);
+        const data = await res.json();
+        if (res.ok && data.courses) {
+          setCourseStandings(data.courses);
+          setOverallRate(data.overallRate || 91);
+        }
+      } catch (err) {
+        console.error("Course fetch error:", err);
+      }
+    };
+    fetchCourses();
+  }, [studentInfo.studentId]);
 
   const triggerHaptic = (type: "success" | "error" | "light") => {
     if (typeof window !== "undefined" && window.Telegram?.WebApp?.HapticFeedback) {
@@ -299,18 +333,26 @@ export default function StudentMiniApp() {
             <ChevronRight className="w-5 h-5 text-[#8C7A6F] shrink-0 ml-2" />
           </div>
 
-          {/* Card 3: Attendance History & Health */}
-          <div className="warm-card p-4 flex items-center justify-between cursor-pointer">
+          {/* Card 3: Attendance History & Health (Click opens Course Breakdown Modal) */}
+          <div
+            onClick={() => setIsCourseModalOpen(true)}
+            className="warm-card p-4 flex items-center justify-between cursor-pointer hover:border-[#B8860B] transition-all"
+          >
             <div className="flex items-center gap-4">
               <div className="w-13 h-13 rounded-2xl bg-[#FAEAE9] text-[#B83833] flex items-center justify-center shrink-0 p-3">
                 <FileText className="w-6 h-6" />
               </div>
               <div className="space-y-0.5">
-                <h3 className="text-sm font-black text-[#2C221E]">
-                  Attendance Standing & Record
-                </h3>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="text-sm font-black text-[#2C221E]">
+                    Course Attendance Standing
+                  </h3>
+                  <span className="text-[10px] font-bold text-[#B8860B] bg-[#FBF2DE] px-1.5 py-0.2 rounded border border-[#B8860B]/30">
+                    Click Details
+                  </span>
+                </div>
                 <p className="text-xs text-[#706259] font-medium">
-                  Current Semester Rate: <span className="font-bold text-[#1E7E53]">92% (Good Standing)</span>
+                  Overall: <span className="font-bold text-[#1E7E53]">{overallRate}%</span> • Tap to view all courses
                 </p>
               </div>
             </div>
@@ -441,6 +483,92 @@ export default function StudentMiniApp() {
           </div>
         </div>
       </div>
+
+      {/* COURSE-BY-COURSE ATTENDANCE MODAL */}
+      {isCourseModalOpen && (
+        <div className="fixed inset-0 bg-[#2C221E]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in-50">
+          <div className="bg-[#FFFFFF] border border-[#EADBCE] rounded-3xl p-6 max-w-sm w-full space-y-5 shadow-2xl">
+            <div className="flex items-start justify-between">
+              <div className="space-y-0.5">
+                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-[#B8860B]" />
+                  Curriculum Attendance Breakdown
+                </h3>
+                <p className="text-xs text-[#706259]">
+                  Year {studentInfo.batchYear} • Semester 1 Course Standings
+                </p>
+              </div>
+              <button
+                onClick={() => setIsCourseModalOpen(false)}
+                className="p-1 rounded-xl text-[#706259] hover:text-[#2C221E] hover:bg-[#F4EFE6]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Courses List */}
+            <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+              {courseStandings.length === 0 ? (
+                <div className="p-4 text-center text-xs text-[#706259]">
+                  Loading course breakdown...
+                </div>
+              ) : (
+                courseStandings.map((c) => (
+                  <div
+                    key={c.courseId}
+                    className="p-3.5 rounded-2xl border border-[#EADBCE] bg-[#F9F6F0] space-y-2"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="font-mono text-[10px] font-bold text-[#B8860B] bg-[#FBF2DE] px-2 py-0.5 rounded-md border border-[#B8860B]/30">
+                          {c.courseCode}
+                        </span>
+                        <h4 className="text-xs font-bold text-[#2C221E] mt-1">
+                          {c.courseTitle}
+                        </h4>
+                      </div>
+                      <span
+                        className={`text-sm font-black ${
+                          c.isGoodStanding ? "text-[#1E7E53]" : "text-[#B83833]"
+                        }`}
+                      >
+                        {c.attendanceRate}%
+                      </span>
+                    </div>
+
+                    <div className="w-full h-2 bg-[#EADBCE]/50 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${
+                          c.isGoodStanding ? "bg-[#1E7E53]" : "bg-[#B83833]"
+                        }`}
+                        style={{ width: `${c.attendanceRate}%` }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-[#706259]">Status Standing:</span>
+                      {c.isGoodStanding ? (
+                        <span className="font-bold text-[#1E7E53] flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> Good Standing
+                        </span>
+                      ) : (
+                        <span className="font-bold text-[#B83833] flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3" /> Low - Action Needed
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="pt-2 border-t border-[#EADBCE] flex items-center justify-between text-xs">
+              <span className="font-bold text-[#706259]">Cumulative Standing:</span>
+              <span className="font-black text-[#1E7E53]">{overallRate}% Overall</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="pt-6 pb-2 text-center text-xs text-[#8C7A6F] font-medium">
