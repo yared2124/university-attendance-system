@@ -216,27 +216,27 @@ export default function InstructorSessionPresenter({
   );
 
   return (
-    <div className="min-h-screen bg-[#070b13] text-slate-100 flex flex-col justify-between p-6">
+    <div className="min-h-screen bg-[#F9F6F0] text-[#2C221E] flex flex-col justify-between p-6">
       {/* Top Header Bar */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EADBCE] pb-4">
         <div className="flex items-center gap-4">
           <Link
             href="/instructor"
-            className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            className="p-2.5 rounded-xl bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#706259] hover:text-[#2C221E] transition-all shadow-sm"
           >
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                SEng3112 • Semester 1
+              <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30">
+                SEng3112 • ሴሚስተር 1
               </span>
-              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Live Classroom Session
+              <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-[#E8F3EE] text-[#1E7E53] border border-[#C2E8CA]">
+                <span className="w-2 h-2 rounded-full bg-[#1E7E53] animate-pulse" />
+                የቀጥታ ክፍል ክፍለ-ጊዜ (Live Session)
               </span>
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-white mt-1">
+            <h1 className="text-xl font-bold tracking-tight text-[#2C221E] mt-1 font-ethiopic">
               Software Requirements Engineering (Year 3)
             </h1>
           </div>
@@ -247,20 +247,20 @@ export default function InstructorSessionPresenter({
           {/* Manual Check-in Trigger */}
           <button
             onClick={() => setIsManualModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl shadow-sm transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all font-ethiopic"
           >
-            <UserPlus className="w-4 h-4 text-blue-400" />
-            Manual Student Check-in (No Phone)
+            <UserPlus className="w-4 h-4 text-[#B8860B]" />
+            ስልክ የሌላቸውን ተማሪዎች መዝግብ (Manual)
           </button>
 
           {/* Mode Switcher */}
-          <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
+          <div className="flex bg-[#ECE4D8] p-1 rounded-xl border border-[#EADBCE]">
             <button
               onClick={() => setMode("DYNAMIC_QR")}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
                 mode === "DYNAMIC_QR"
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-[#1E7E53] text-white shadow-sm"
+                  : "text-[#706259] hover:text-[#2C221E]"
               }`}
             >
               <QrCode className="w-3.5 h-3.5" />
@@ -270,18 +270,18 @@ export default function InstructorSessionPresenter({
               onClick={() => setMode("ROLLING_CODE")}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
                 mode === "ROLLING_CODE"
-                  ? "bg-amber-600 text-white"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-[#B8860B] text-white shadow-sm"
+                  : "text-[#706259] hover:text-[#2C221E]"
               }`}
             >
               <KeyRound className="w-3.5 h-3.5" />
-              Outage Code
+              Rolling Code
             </button>
           </div>
 
           <button
             onClick={toggleFullscreen}
-            className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300"
+            className="p-2.5 rounded-xl bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#706259] shadow-sm"
             title="Toggle Fullscreen"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -291,10 +291,10 @@ export default function InstructorSessionPresenter({
             <button
               disabled={isClosing}
               onClick={handleCloseSession}
-              className="flex items-center gap-2 px-3.5 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-[#FAEAE9] hover:bg-[#F8D7DA] text-[#B83833] border border-[#F8D7DA] font-bold text-xs rounded-xl shadow-sm transition-all disabled:opacity-50 font-ethiopic"
             >
               <Square className="w-3.5 h-3.5 fill-current" />
-              {isClosing ? "Terminating..." : "Terminate Session"}
+              {isClosing ? "እየተዘጋ ነው..." : "ክፍለ-ጊዜውን ዝጋ"}
             </button>
           )}
         </div>
@@ -305,57 +305,57 @@ export default function InstructorSessionPresenter({
         {/* LEFT / CENTER: Active Token Presenter */}
         <div className="lg:col-span-8 flex flex-col items-center justify-center text-center space-y-6">
           {isClosed ? (
-            <div className="p-10 rounded-3xl bg-slate-900/60 border border-slate-800 max-w-md w-full space-y-4 text-center">
-              <CheckCircle2 className="w-14 h-14 text-emerald-400 mx-auto" />
-              <h2 className="text-xl font-bold text-white">Attendance Finalized</h2>
-              <p className="text-xs text-slate-400">
+            <div className="p-10 rounded-3xl warm-card max-w-md w-full space-y-4 text-center">
+              <CheckCircle2 className="w-14 h-14 text-[#1E7E53] mx-auto" />
+              <h2 className="text-xl font-bold text-[#2C221E] font-ethiopic">ክፍለ-ጊዜው ተጠናቋል</h2>
+              <p className="text-xs text-[#706259]">
                 The session has been terminated. Cohort absences have been materialized into PostgreSQL.
               </p>
               {closedSummary && (
-                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-800">
-                  <div className="bg-emerald-950/30 border border-emerald-500/20 p-3 rounded-xl">
-                    <p className="text-xs text-emerald-300 font-semibold">Present</p>
-                    <p className="text-2xl font-bold text-emerald-400">{closedSummary.presentCount}</p>
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[#EADBCE]">
+                  <div className="bg-[#E8F3EE] border border-[#C2E8CA] p-3 rounded-2xl">
+                    <p className="text-xs text-[#1E7E53] font-bold">የተገኙ (Present)</p>
+                    <p className="text-2xl font-black text-[#1E7E53]">{closedSummary.presentCount}</p>
                   </div>
-                  <div className="bg-rose-950/30 border border-rose-500/20 p-3 rounded-xl">
-                    <p className="text-xs text-rose-300 font-semibold">Materialized Absent</p>
-                    <p className="text-2xl font-bold text-rose-400">{closedSummary.absentCount}</p>
+                  <div className="bg-[#FAEAE9] border border-[#F8D7DA] p-3 rounded-2xl">
+                    <p className="text-xs text-[#B83833] font-bold">የቀሩ (Absent)</p>
+                    <p className="text-2xl font-black text-[#B83833]">{closedSummary.absentCount}</p>
                   </div>
                 </div>
               )}
               <Link
                 href="/instructor"
-                className="inline-block mt-3 w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl transition-colors"
+                className="inline-block mt-3 w-full py-3 px-4 btn-ochre text-xs font-bold rounded-xl shadow-md transition-all font-ethiopic"
               >
-                Return to Course Deck
+                ወደ መምህራን ገጽ ተመለስ
               </Link>
             </div>
           ) : mode === "DYNAMIC_QR" ? (
             <div className="flex flex-col items-center space-y-4">
               {/* Dynamic QR Box with Circular Timer Ring */}
-              <div className="relative p-6 rounded-3xl bg-white shadow-2xl border-4 border-slate-800/20">
+              <div className="relative p-6 rounded-3xl bg-[#FFFFFF] shadow-xl border-4 border-[#EADBCE]">
                 {qrSvgDataUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={qrSvgDataUrl}
                     alt="Dynamic Attendance QR"
-                    className="w-72 h-72 md:w-96 md:h-96 rounded-xl"
+                    className="w-72 h-72 md:w-96 md:h-96 rounded-2xl"
                   />
                 ) : (
                   <div className="w-72 h-72 md:w-96 md:h-96 flex items-center justify-center">
-                    <Radio className="w-10 h-10 text-slate-900 animate-spin" />
+                    <Radio className="w-10 h-10 text-[#B8860B] animate-spin" />
                   </div>
                 )}
 
                 {/* Circular Gauge Badge */}
-                <div className="absolute -top-4 -right-4 w-14 h-14 rounded-full bg-slate-900 border-2 border-slate-800 shadow-xl flex items-center justify-center">
+                <div className="absolute -top-4 -right-4 w-14 h-14 rounded-full bg-[#FFFFFF] border-2 border-[#EADBCE] shadow-lg flex items-center justify-center">
                   <svg className="w-12 h-12 -rotate-90">
-                    <circle cx="24" cy="24" r="19" stroke="#334155" strokeWidth="3" fill="transparent" />
+                    <circle cx="24" cy="24" r="19" stroke="#ECE4D8" strokeWidth="3" fill="transparent" />
                     <circle
                       cx="24"
                       cy="24"
                       r="19"
-                      stroke="#0284c7"
+                      stroke="#B8860B"
                       strokeWidth="3"
                       fill="transparent"
                       strokeDasharray="119"
@@ -363,43 +363,43 @@ export default function InstructorSessionPresenter({
                       className="transition-all duration-1000 ease-linear"
                     />
                   </svg>
-                  <span className="absolute text-xs font-bold text-sky-400">{secondsRemaining}s</span>
+                  <span className="absolute text-xs font-black text-[#B8860B]">{secondsRemaining}s</span>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-slate-200">
-                  Scan via Telegram Mini App
+                <p className="text-sm font-black text-[#2C221E] font-ethiopic">
+                  በቴሌግራም ሚኒ አፕ ስካን ያድርጉ (Scan via Mini App)
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#706259]">
                   QR seed rotates every 15s. Forwarded screenshots will fail automatically.
                 </p>
               </div>
             </div>
           ) : (
             /* OUTAGE MODE: HIGH-CONTRAST ROLLING PASSCODE */
-            <div className="p-8 rounded-3xl bg-slate-900/80 border-2 border-amber-500/40 max-w-lg w-full space-y-5">
-              <div className="flex items-center justify-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider bg-amber-500/10 py-1.5 px-3 rounded-full w-fit mx-auto border border-amber-500/20">
+            <div className="p-8 rounded-3xl warm-card border-2 border-[#B8860B] max-w-lg w-full space-y-5">
+              <div className="flex items-center justify-center gap-2 text-[#B8860B] font-bold text-xs uppercase tracking-wider bg-[#FBF2DE] py-1.5 px-3 rounded-full w-fit mx-auto border border-[#B8860B]/30">
                 <AlertTriangle className="w-4 h-4" />
-                Power Outage / Low-Tech Fallback Mode
+                የመብራት ወይም የኔትወርክ መቋረጥ ጊዜ ማሳያ (Outage Fallback)
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">
+                <p className="text-xs text-[#706259] font-bold uppercase tracking-wider">
                   Active Classroom Rolling Code
                 </p>
-                <div className="py-6 px-8 rounded-2xl bg-slate-950 border border-slate-800">
-                  <span className="text-5xl md:text-7xl font-mono font-black text-amber-300 tracking-wider">
+                <div className="py-6 px-8 rounded-2xl bg-[#F4EFE6] border border-[#EADBCE]">
+                  <span className="text-5xl md:text-7xl font-mono font-black text-[#B8860B] tracking-wider">
                     {rollingCode}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-4 text-slate-400 text-xs">
-                <span>Cycles every 20 seconds</span>
+              <div className="flex items-center justify-center gap-4 text-[#706259] text-xs">
+                <span>በየ 20 ሰከንዱ ይቀያየራል</span>
                 <span>•</span>
-                <span className="text-amber-400 font-medium">
-                  Next code in <strong className="text-white">{secondsRemaining}s</strong>
+                <span className="text-[#B8860B] font-bold">
+                  Next code in <strong className="text-[#2C221E]">{secondsRemaining}s</strong>
                 </span>
               </div>
             </div>
@@ -407,21 +407,21 @@ export default function InstructorSessionPresenter({
         </div>
 
         {/* RIGHT: Live Incoming Attendance Roster Feed */}
-        <div className="lg:col-span-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4 h-[480px] flex flex-col justify-between">
+        <div className="lg:col-span-4 p-5 rounded-3xl warm-card space-y-4 h-[480px] flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                <Users className="w-4 h-4 text-blue-400" />
-                Live Attendance Feed
+            <div className="flex items-center justify-between pb-3 border-b border-[#EADBCE]">
+              <h3 className="text-xs font-bold text-[#2C221E] uppercase tracking-wider flex items-center gap-2 font-ethiopic">
+                <Users className="w-4 h-4 text-[#B8860B]" />
+                የቀጥታ የተማሪዎች መግቢያ (Live Feed)
               </h3>
-              <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+              <span className="text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA]">
                 {checkedInCount} / {totalCohort} ({attendanceRate}%)
               </span>
             </div>
 
-            <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden mt-3">
+            <div className="w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden mt-3">
               <div
-                className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                className="h-full bg-[#1E7E53] rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, attendanceRate)}%` }}
               />
             </div>
@@ -430,31 +430,31 @@ export default function InstructorSessionPresenter({
           {/* Incoming Stream list */}
           <div className="flex-1 overflow-y-auto space-y-2 py-2 pr-1">
             {recentCheckIns.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center text-slate-500 space-y-2">
-                <Clock className="w-7 h-7 opacity-30 animate-spin" />
-                <p className="text-xs">Awaiting student check-ins...</p>
+              <div className="h-full flex flex-col items-center justify-center text-center text-[#706259] space-y-2">
+                <Clock className="w-7 h-7 opacity-40 animate-spin text-[#B8860B]" />
+                <p className="text-xs font-ethiopic">ተማሪዎች እስኪመዘገቡ ድረስ እየጠበቀ ነው...</p>
               </div>
             ) : (
               recentCheckIns.map((rec, i) => (
                 <div
                   key={rec.id || `live_${i}`}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 text-xs"
+                  className="flex items-center justify-between p-3 rounded-2xl bg-[#FFFFFF] border border-[#EADBCE] text-xs shadow-sm"
                 >
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#1E7E53] shrink-0" />
                     <div>
-                      <p className="font-semibold text-slate-200 flex items-center gap-1.5">
+                      <p className="font-bold text-[#2C221E] flex items-center gap-1.5">
                         {rec.fullName}
                         {rec.isManual && (
-                          <span className="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-1 py-0.2 rounded border border-blue-500/20">
-                            Manual
+                          <span className="text-[10px] font-bold text-[#B8860B] bg-[#FBF2DE] px-1.5 py-0.5 rounded-md border border-[#B8860B]/30">
+                            በእጅ (Manual)
                           </span>
                         )}
                       </p>
-                      <p className="text-[10px] text-slate-400 font-mono">{rec.studentId}</p>
+                      <p className="text-[10px] text-[#706259] font-mono">{rec.studentId}</p>
                     </div>
                   </div>
-                  <span suppressHydrationWarning className="text-[10px] font-mono text-slate-400">
+                  <span suppressHydrationWarning className="text-[10px] font-mono font-medium text-[#706259]">
                     {new Date(rec.markedAt).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -466,29 +466,29 @@ export default function InstructorSessionPresenter({
             )}
           </div>
 
-          <div className="pt-2 border-t border-slate-800/80 text-[11px] text-center text-slate-500">
-            Real-time Atomic Sync via Serverless Edge
+          <div className="pt-2 border-t border-[#EADBCE] text-[11px] text-center text-[#706259] font-medium">
+            Atomic Real-time Sync • Powered by AAU SEng
           </div>
         </div>
       </main>
 
       {/* MANUAL IN-CLASS REGISTRATION MODAL */}
       {isManualModalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 max-w-md w-full space-y-4 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 bg-[#2C221E]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-2xl max-w-md w-full space-y-4 animate-in fade-in zoom-in-95">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <UserPlus className="w-5 h-5 text-blue-400" />
-                  Manual In-Class Check-in
+                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2 font-ethiopic">
+                  <UserPlus className="w-5 h-5 text-[#B8860B]" />
+                  በክፍል ውስጥ በእጅ መመዝገቢያ (Manual Check-in)
                 </h3>
-                <p className="text-xs text-slate-400">
-                  For students without a smartphone, battery outage, or network drops.
+                <p className="text-xs text-[#706259] font-ethiopic">
+                  ስልክ ለሌላቸው ወይም ቻርጅ ላለቀባቸው ተማሪዎች መምህሩ እዛው ይመዘግባል።
                 </p>
               </div>
               <button
                 onClick={() => setIsManualModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-xl text-[#706259] hover:text-[#2C221E] hover:bg-[#F4EFE6]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -496,64 +496,64 @@ export default function InstructorSessionPresenter({
 
             {/* Quick Reason Picker */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Select Verification Reason</label>
+              <label className="text-xs font-bold text-[#706259] font-ethiopic">የምክንያት ምርጫ</label>
               <select
                 value={manualReason}
                 onChange={(e) => setManualReason(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
               >
-                <option value="No smartphone / dead battery">📵 No smartphone / phone battery died</option>
-                <option value="No cellular data / internet down">🌐 No cellular data / offline</option>
-                <option value="Physical paper sign-in verified">📝 Physical paper roster signed in hall</option>
+                <option value="No smartphone / dead battery">📵 ስማርት ፎን የለውም / ቻርጅ አልቋል</option>
+                <option value="No cellular data / internet down">🌐 ኢንተርኔት / ዳታ የለውም</option>
+                <option value="Physical paper sign-in verified">📝 በወረቀት ተረጋግጦ የተፈረመ</option>
               </select>
             </div>
 
             {/* Search Cohort */}
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-[#706259] absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="Search student by name or ID (e.g. Dawit)..."
+                placeholder="በስም ወይም በ ID ፈልግ (ምሳሌ Abebe)..."
                 value={manualSearchQuery}
                 onChange={(e) => setManualSearchQuery(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl pl-9 pr-3 py-2 text-xs text-[#2C221E] placeholder-[#A6978A] focus:outline-none focus:border-[#B8860B]"
               />
             </div>
 
             {manualSuccessMsg && (
-              <p className="text-xs text-emerald-400 font-semibold p-2 bg-emerald-950/40 rounded-lg border border-emerald-500/30">
+              <p className="text-xs text-[#1E7E53] font-bold p-2.5 bg-[#E8F3EE] rounded-xl border border-[#C2E8CA]">
                 {manualSuccessMsg}
               </p>
             )}
 
             {/* Students List */}
-            <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1 divide-y divide-slate-800/40">
+            <div className="max-h-60 overflow-y-auto space-y-2 pr-1 divide-y divide-[#EADBCE]/60">
               {filteredCohortForManual.map((stu) => (
                 <div
                   key={stu.id}
-                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-800/40 transition-colors"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F9F6F0] transition-colors"
                 >
                   <div>
-                    <p className="text-xs font-bold text-white">{stu.name}</p>
-                    <p className="text-[10px] text-slate-400 font-mono">{stu.studentId} • {stu.phone}</p>
+                    <p className="text-xs font-bold text-[#2C221E]">{stu.name}</p>
+                    <p className="text-[10px] text-[#706259] font-mono">{stu.studentId} • {stu.phone}</p>
                   </div>
                   <button
                     disabled={isSubmittingManual}
                     onClick={() => handleManualMark(stu)}
-                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-lg shadow-sm transition-all disabled:opacity-50"
+                    className="px-3 py-1.5 btn-ochre text-xs font-bold rounded-lg shadow-sm transition-all disabled:opacity-50 font-ethiopic"
                   >
-                    Mark Present
+                    ተገኝቷል (Present)
                   </button>
                 </div>
               ))}
             </div>
 
-            <div className="pt-2 border-t border-slate-800 flex justify-end">
+            <div className="pt-2 border-t border-[#EADBCE] flex justify-end">
               <button
                 onClick={() => setIsManualModalOpen(false)}
-                className="px-4 py-1.5 text-xs text-slate-400 hover:text-white"
+                className="px-4 py-2 text-xs font-bold text-[#706259] hover:text-[#2C221E]"
               >
-                Done
+                ጨርስ (Done)
               </button>
             </div>
           </div>
@@ -561,10 +561,10 @@ export default function InstructorSessionPresenter({
       )}
 
       {/* Footer */}
-      <footer className="text-center text-xs text-slate-500 pt-3 border-t border-slate-800/80 flex items-center justify-between">
-        <span>Department of Software Engineering</span>
-        <span>Manual In-Class Fallback Enabled</span>
-        <span>Version 2.1.0</span>
+      <footer className="text-center text-xs text-[#706259] pt-3 border-t border-[#EADBCE] flex items-center justify-between">
+        <span className="font-medium font-ethiopic">የሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት • Addis Ababa University</span>
+        <span className="font-semibold text-[#B8860B]">Manual In-Class Fallback Enabled</span>
+        <span className="font-mono text-[10px]">v2.1.0</span>
       </footer>
     </div>
   );

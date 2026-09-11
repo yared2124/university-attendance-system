@@ -361,55 +361,55 @@ export default function DepartmentHeadDashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 p-6 md:p-10 max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#F9F6F0] text-[#2C221E] p-6 md:p-10 max-w-7xl mx-auto space-y-8">
       {/* Top Academic Context & Header */}
-      <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-slate-800/80 pb-6">
+      <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-[#EADBCE] pb-6">
         <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-blue-600/10 border border-blue-500/30 flex items-center justify-center shrink-0">
-            <Building2 className="w-7 h-7 text-blue-400" />
+          <div className="w-14 h-14 rounded-2xl bg-[#FBF2DE] border border-[#B8860B]/30 flex items-center justify-center shrink-0 shadow-sm">
+            <Building2 className="w-7 h-7 text-[#B8860B]" />
           </div>
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                Department Leadership Console
+              <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30 font-ethiopic">
+                የዲፓርትመንት አመራር ገጽ • Department Head Console
               </span>
 
               {/* Academic Year Dropdown */}
-              <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-0.5 text-xs text-slate-300">
-                <Calendar className="w-3.5 h-3.5 text-slate-400" />
+              <div className="flex items-center gap-1.5 bg-[#FFFFFF] border border-[#EADBCE] rounded-lg px-2.5 py-1 text-xs text-[#706259] font-bold shadow-sm">
+                <Calendar className="w-3.5 h-3.5 text-[#B8860B]" />
                 <span>{academicYear}</span>
               </div>
 
               {/* Semester Switcher Tabs */}
-              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5">
+              <div className="flex items-center bg-[#ECE4D8] border border-[#EADBCE] rounded-xl p-1">
                 <button
                   onClick={() => setSelectedSemester(1)}
-                  className={`px-2.5 py-0.5 text-xs font-semibold rounded-md transition-colors ${
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all font-ethiopic ${
                     selectedSemester === 1
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:text-slate-200"
+                      ? "bg-[#B8860B] text-white shadow-sm"
+                      : "text-[#706259] hover:text-[#2C221E]"
                   }`}
                 >
-                  Semester 1
+                  ሴሚስተር 1
                 </button>
                 <button
                   onClick={() => setSelectedSemester(2)}
-                  className={`px-2.5 py-0.5 text-xs font-semibold rounded-md transition-colors ${
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all font-ethiopic ${
                     selectedSemester === 2
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:text-slate-200"
+                      ? "bg-[#B8860B] text-white shadow-sm"
+                      : "text-[#706259] hover:text-[#2C221E]"
                   }`}
                 >
-                  Semester 2
+                  ሴሚስተር 2
                 </button>
               </div>
             </div>
 
-            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-white">
-              Department of Software Engineering
+            <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-[#2C221E] font-ethiopic">
+              የሶፍትዌር ኢንጂነሪንግ ዲፓርትመንት
             </h1>
-            <p className="text-xs text-slate-400">
-              Institutional Attendance Integrity, Single-Device Telegram Binding & At-Risk Intervention
+            <p className="text-xs text-[#706259] font-medium font-ethiopic">
+              የአቴንዳንስ ቁጥጥር፣ የቴሌግራም ቦት ማስጠንቀቂያና የባች ክትትል (Addis Ababa University)
             </p>
           </div>
         </div>
@@ -418,40 +418,40 @@ export default function DepartmentHeadDashboard() {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setIsBroadcastModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2 bg-rose-600/10 border border-rose-500/30 hover:bg-rose-600/20 text-rose-300 font-semibold text-xs rounded-xl transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#FAEAE9] border border-[#F8D7DA] hover:bg-[#F8D7DA] text-[#B83833] font-bold text-xs rounded-xl shadow-sm transition-all font-ethiopic"
           >
-            <AlertOctagon className="w-4 h-4 text-rose-400" />
-            Broadcast At-Risk Warning
+            <AlertOctagon className="w-4 h-4 text-[#B83833]" />
+            የአስቸኳይ ማስጠንቀቂያ ላክ
           </button>
           <a
             href={`/api/admin/export?batchYear=${selectedBatchFilter === "ALL" ? 3 : selectedBatchFilter}`}
             target="_blank"
-            className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-200 font-semibold text-xs rounded-xl transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-colors font-ethiopic"
           >
-            <Download className="w-4 h-4 text-emerald-400" />
-            Export (.xlsx)
+            <Download className="w-4 h-4 text-[#1E7E53]" />
+            ሪፖርት አውርድ (.xlsx)
           </a>
           <Link
             href="/instructor"
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl shadow-md shadow-blue-600/20 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 btn-ochre text-xs font-bold rounded-xl shadow-md transition-all font-ethiopic"
           >
-            Instructor View <ArrowUpRight className="w-4 h-4" />
+            የመምህራን ማሳያ <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>
       </header>
 
       {/* Dispatched Notification Success Banner */}
       {dispatchedSuccessStudent && (
-        <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 flex items-center justify-between animate-in fade-in-50">
-          <div className="flex items-center gap-3 text-xs font-semibold">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-4 rounded-2xl bg-[#E8F3EE] border border-[#C2E8CA] text-[#1E7E53] flex items-center justify-between animate-in fade-in-50">
+          <div className="flex items-center gap-3 text-xs font-bold font-ethiopic">
+            <CheckCircle2 className="w-4 h-4 text-[#1E7E53] shrink-0" />
             <span>
-              Telegram Warning dispatched to <strong>{dispatchedSuccessStudent}</strong>. Direct message logged in audit store.
+              የቴሌግራም ማስጠንቀቂያ ለ <strong>{dispatchedSuccessStudent}</strong> በተሳካ ሁኔታ ተልኳል።
             </span>
           </div>
           <button
             onClick={() => setDispatchedSuccessStudent(null)}
-            className="text-emerald-400 hover:text-white"
+            className="text-[#1E7E53] hover:text-[#166542]"
           >
             <X className="w-4 h-4" />
           </button>
@@ -460,51 +460,53 @@ export default function DepartmentHeadDashboard() {
 
       {/* Primary KPI Metrics */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-2">
-          <span className="text-xs font-medium text-slate-400">Department Attendance Rate</span>
+        <div className="warm-card p-5 space-y-2">
+          <span className="text-xs font-bold text-[#706259] font-ethiopic">የዲፓርትመንቱ አጠቃላይ ምጣኔ</span>
           <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-bold text-white tracking-tight">88.4%</span>
-            <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-              Good Standing
+            <span className="text-3xl font-black text-[#2C221E] tracking-tight">88.4%</span>
+            <span className="text-xs font-bold text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg border border-[#C2E8CA] font-ethiopic">
+              ጥሩ ደረጃ
             </span>
           </div>
-          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-            <div className="h-full bg-emerald-500 rounded-full w-[88.4%]" />
+          <div className="w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden">
+            <div className="h-full bg-[#1E7E53] rounded-full w-[88.4%]" />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-slate-900/60 border border-rose-900/30 space-y-2">
-          <span className="text-xs font-medium text-slate-400">Critical Risk Students (&lt;75%)</span>
+        <div className="warm-card p-5 space-y-2 border-l-4 border-l-[#B83833]">
+          <span className="text-xs font-bold text-[#706259] font-ethiopic">አስቸኳይ ማስጠንቀቂያ (&lt;75%)</span>
           <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-bold text-rose-400 tracking-tight">
-              {atRiskStudents.length}
+            <span className="text-3xl font-black text-[#B83833] tracking-tight">
+              {atRiskStudents.length} ተማሪዎች
             </span>
-            <span className="text-xs font-semibold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
-              Urgent Attention
+            <span className="text-xs font-bold text-[#B83833] bg-[#FAEAE9] px-2.5 py-0.5 rounded-lg border border-[#F8D7DA] font-ethiopic">
+              ፈተና ሊከለከሉ ይችላሉ
             </span>
           </div>
-          <p className="text-[11px] text-slate-400">Facing semester exam exclusion without intervention</p>
+          <p className="text-[11px] text-[#706259] font-medium font-ethiopic">ከ 75% በታች የቀሩና ክትትል የሚሹ</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-2">
-          <span className="text-xs font-medium text-slate-400">Active Classroom Sessions</span>
+        <div className="warm-card p-5 space-y-2">
+          <span className="text-xs font-bold text-[#706259] font-ethiopic">የቀጥታ ክፍለ-ጊዜያት</span>
           <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-bold text-sky-400 tracking-tight">1</span>
-            <span className="text-xs font-semibold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
+            <span className="text-3xl font-black text-[#B8860B] tracking-tight">1</span>
+            <span className="text-xs font-bold text-[#B8860B] bg-[#FBF2DE] px-2.5 py-0.5 rounded-lg border border-[#B8860B]/30 font-ethiopic">
               SEng3112 Live
             </span>
           </div>
-          <p className="text-[11px] text-slate-400">Dynamic 15s QR + In-Class Manual Mark available</p>
+          <p className="text-[11px] text-[#706259] font-medium font-ethiopic">Dynamic 15s QR + በእጅ መመዝገቢያ ክፍት ነው</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-2">
-          <span className="text-xs font-medium text-slate-400">Total Enrolled Cohort</span>
+        <div className="warm-card p-5 space-y-2">
+          <span className="text-xs font-bold text-[#706259] font-ethiopic">አጠቃላይ ተማሪዎች</span>
           <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-bold text-white tracking-tight">149</span>
-            <span className="text-xs font-semibold text-slate-400">Years 1–5</span>
+            <span className="text-3xl font-black text-[#2C221E] tracking-tight">149</span>
+            <span className="text-xs font-bold text-[#706259] bg-[#F4EFE6] px-2.5 py-0.5 rounded-lg border border-[#EADBCE]">
+              ዓመት 1–5
+            </span>
           </div>
-          <p className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5" /> 100% Whitelisted Telegram Contact
+          <p className="text-[11px] text-[#1E7E53] font-bold flex items-center gap-1 font-ethiopic">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#1E7E53]" /> 100% በቴሌግራም የተረጋገጡ
           </p>
         </div>
       </section>
@@ -512,10 +514,10 @@ export default function DepartmentHeadDashboard() {
       {/* 5-BATCH COHORT HEALTH MATRIX (Years 1 to 5) */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-            Academic Cohorts Overview (Semester {selectedSemester})
+          <h2 className="text-xs font-black text-[#706259] uppercase tracking-wider font-ethiopic">
+            የ 5ቱ ዓመታት የባች ሁኔታ • Cohort Overview (ሴሚስተር {selectedSemester})
           </h2>
-          <span className="text-xs text-slate-500">Click any batch card to filter records</span>
+          <span className="text-xs text-[#706259] font-medium font-ethiopic">ባቾቹን በመንካት ዝርዝሩን ይመልከቱ</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -523,40 +525,40 @@ export default function DepartmentHeadDashboard() {
             <div
               key={b.year}
               onClick={() => setSelectedBatchFilter(selectedBatchFilter === b.year ? "ALL" : b.year)}
-              className={`p-4 rounded-xl border cursor-pointer transition-all ${
+              className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                 selectedBatchFilter === b.year
-                  ? "bg-slate-800 border-blue-500 shadow-md shadow-blue-500/10"
-                  : "bg-slate-900/50 border-slate-800/80 hover:border-slate-700"
+                  ? "bg-[#FFFFFF] border-[#B8860B] ring-2 ring-[#B8860B]/30 shadow-md"
+                  : "bg-[#FFFFFF] border-[#EADBCE] hover:border-[#B8860B] shadow-sm"
               }`}
             >
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-slate-200">{b.name}</span>
+                <span className="font-bold text-[#2C221E]">{b.name}</span>
                 <span
-                  className={`font-bold px-1.5 py-0.5 rounded text-[11px] ${
+                  className={`font-black px-2 py-0.5 rounded-lg text-xs ${
                     b.rate >= 85
-                      ? "text-emerald-400 bg-emerald-500/10"
+                      ? "text-[#1E7E53] bg-[#E8F3EE]"
                       : b.rate >= 75
-                      ? "text-amber-400 bg-amber-500/10"
-                      : "text-rose-400 bg-rose-500/10"
+                      ? "text-[#B8860B] bg-[#FBF2DE]"
+                      : "text-[#B83833] bg-[#FAEAE9]"
                   }`}
                 >
                   {b.rate}%
                 </span>
               </div>
 
-              <div className="my-2.5 w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
+              <div className="my-2.5 w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full ${
-                    b.rate >= 85 ? "bg-emerald-500" : b.rate >= 75 ? "bg-amber-500" : "bg-rose-500"
+                    b.rate >= 85 ? "bg-[#1E7E53]" : b.rate >= 75 ? "bg-[#B8860B]" : "bg-[#B83833]"
                   }`}
                   style={{ width: `${b.rate}%` }}
                 />
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-slate-400">
-                <span>{b.total} Students</span>
-                <span className={b.atRisk > 0 ? "text-rose-400 font-semibold" : "text-slate-500"}>
-                  {b.atRisk} At-Risk
+              <div className="flex items-center justify-between text-[11px] text-[#706259] font-medium">
+                <span>{b.total} ተማሪዎች</span>
+                <span className={b.atRisk > 0 ? "text-[#B83833] font-bold" : "text-[#706259]"}>
+                  {b.atRisk} የቀሩ
                 </span>
               </div>
             </div>
@@ -565,105 +567,105 @@ export default function DepartmentHeadDashboard() {
       </section>
 
       {/* Main Feature Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-800/80 pb-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-[#EADBCE] pb-3">
         <button
           onClick={() => setActiveTab("atRisk")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all font-ethiopic ${
             activeTab === "atRisk"
-              ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
-              : "text-slate-400 hover:text-slate-200"
+              ? "bg-[#B83833] text-white shadow-md"
+              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
           }`}
         >
           <AlertTriangle className="w-4 h-4" />
-          🚨 Critical Warning Center ({atRiskStudents.length})
+          🚨 አስቸኳይ ማስጠንቀቂያ ማዕከል ({atRiskStudents.length})
         </button>
         <button
           onClick={() => setActiveTab("roster")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all font-ethiopic ${
             activeTab === "roster"
-              ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
-              : "text-slate-400 hover:text-slate-200"
+              ? "btn-ochre shadow-md"
+              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
           }`}
         >
           <Users className="w-4 h-4" />
-          Full Attendance Roster & Excuse
+          ሙሉ የተማሪዎች መዝገብና ፈቃድ
         </button>
         <button
           onClick={() => setActiveTab("upload")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all font-ethiopic ${
             activeTab === "upload"
-              ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
-              : "text-slate-400 hover:text-slate-200"
+              ? "btn-ochre shadow-md"
+              : "text-[#706259] hover:text-[#2C221E] bg-[#FFFFFF] border border-[#EADBCE]"
           }`}
         >
           <Upload className="w-4 h-4" />
-          Drag & Drop Student Whitelist (CSV / Excel)
+          ተማሪዎችን በ Drag & Drop ማስገቢያ (Excel / CSV)
         </button>
       </div>
 
       {/* TAB 1: CRITICAL AT-RISK ACTION CENTER */}
       {activeTab === "atRisk" && (
         <section className="space-y-4">
-          <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-900/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="p-5 rounded-3xl bg-[#FAEAE9] border border-[#F8D7DA] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-rose-300 flex items-center gap-2">
-                <AlertOctagon className="w-4 h-4 text-rose-400" />
-                Urgent Intervention Required: Students Below 75% Threshold
+              <h3 className="text-sm font-black text-[#B83833] flex items-center gap-2 font-ethiopic">
+                <AlertOctagon className="w-5 h-5 text-[#B83833]" />
+                አስቸኳይ ክትትል የሚሹ ተማሪዎች (ከ 75% በታች የቀሩ)
               </h3>
-              <p className="text-xs text-slate-300">
-                You can directly call absent students on their phone or dispatch official Telegram Bot warning notifications.
+              <p className="text-xs text-[#706259] font-ethiopic">
+                በቀጥታ ወደ ተማሪው ስልክ በመደወል ማነጋገር ወይም በቴሌግራም ቦት ይፋዊ የዲፓርትመንት ማስጠንቀቂያ መላክ ይችላሉ።
               </p>
             </div>
             <button
               onClick={() => setIsBroadcastModalOpen(true)}
-              className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-600/20 transition-all shrink-0"
+              className="px-4 py-2.5 bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs rounded-xl shadow-md transition-all shrink-0 font-ethiopic"
             >
-              Broadcast Warning to All {atRiskStudents.length} Students
+              ለሁሉም {atRiskStudents.length} ተማሪዎች ማስጠንቀቂያ ላክ
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
+          <div className="overflow-x-auto rounded-3xl border border-[#EADBCE] bg-[#FFFFFF] shadow-sm">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800">
+              <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
                 <tr>
-                  <th className="py-3.5 px-4">Student</th>
-                  <th className="py-3.5 px-4">ID & Batch</th>
-                  <th className="py-3.5 px-4">Telegram Phone</th>
-                  <th className="py-3.5 px-4">Attendance Rate</th>
-                  <th className="py-3.5 px-4">Last Status</th>
-                  <th className="py-3.5 px-4 text-right">Direct Intervention Actions</th>
+                  <th className="py-3.5 px-4 font-ethiopic">ተማሪ (Student)</th>
+                  <th className="py-3.5 px-4">የተማሪ መታወቂያ & ባች</th>
+                  <th className="py-3.5 px-4">የቴሌግራም ስልክ ቁጥር</th>
+                  <th className="py-3.5 px-4">የአቴንዳንስ ምጣኔ</th>
+                  <th className="py-3.5 px-4">የመጨረሻ ሁኔታ</th>
+                  <th className="py-3.5 px-4 text-right font-ethiopic">ቀጥታ እርምጃዎች</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-[#EADBCE]">
                 {atRiskStudents.map((s) => (
-                  <tr key={s.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center font-bold text-xs">
+                  <tr key={s.id} className="hover:bg-[#F9F6F0] transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-[#2C221E] flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-[#FAEAE9] text-[#B83833] border border-[#F8D7DA] flex items-center justify-center font-black text-xs">
                         !
                       </div>
                       <div>
                         <p>{s.name}</p>
                         {s.telegramUsername && (
-                          <p className="text-[10px] text-blue-400 font-normal">@{s.telegramUsername}</p>
+                          <p className="text-[10px] text-[#B8860B] font-medium">@{s.telegramUsername}</p>
                         )}
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-300 font-mono">
-                      {s.studentId} • <span className="font-sans text-slate-400">Year {s.batchYear}</span>
+                    <td className="py-3.5 px-4 text-[#706259] font-mono">
+                      {s.studentId} • <span className="font-sans font-bold text-[#2C221E]">Year {s.batchYear}</span>
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-200">
+                    <td className="py-3.5 px-4 font-mono font-medium text-[#2C221E]">
                       {s.phoneNumber}
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-rose-400">{s.attendanceRate}%</span>
-                        <span className="text-[10px] font-bold text-rose-300 bg-rose-500/20 px-1.5 py-0.5 rounded border border-rose-500/30">
-                          CRITICAL RISK
+                        <span className="text-sm font-black text-[#B83833]">{s.attendanceRate}%</span>
+                        <span className="text-[10px] font-black text-[#B83833] bg-[#FAEAE9] px-2 py-0.5 rounded-md border border-[#F8D7DA]">
+                          አስቸኳይ (RISK)
                         </span>
                       </div>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded font-bold text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                      <span className="px-2 py-0.5 rounded-md font-bold text-[10px] bg-[#FAEAE9] text-[#B83833] border border-[#F8D7DA]">
                         {s.status} ({s.date})
                       </span>
                     </td>
@@ -672,21 +674,21 @@ export default function DepartmentHeadDashboard() {
                         {/* 1. Direct Phone Call Button */}
                         <a
                           href={`tel:${s.phoneNumber}`}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 border border-emerald-500/20 font-semibold text-xs transition-colors"
-                          title="Call student directly to ask why they are missing class"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E8F3EE] hover:bg-[#C2E8CA] text-[#1E7E53] border border-[#C2E8CA] font-bold text-xs transition-colors font-ethiopic"
+                          title="በስልክ ደውለው ያነጋግሩ"
                         >
                           <Phone className="w-3.5 h-3.5" />
-                          Call
+                          ደውል
                         </a>
 
                         {/* 2. Direct Telegram Warning Button */}
                         <button
                           disabled={alertingStudentId === s.id}
                           onClick={() => handleSendTelegramWarning(s)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs shadow-sm transition-all disabled:opacity-50"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50 font-ethiopic"
                         >
                           <Send className="w-3.5 h-3.5" />
-                          {alertingStudentId === s.id ? "Sending..." : "Send Telegram Warning"}
+                          {alertingStudentId === s.id ? "እየላከ ነው..." : "ማስጠንቀቂያ ላክ"}
                         </button>
                       </div>
                     </td>
@@ -703,18 +705,18 @@ export default function DepartmentHeadDashboard() {
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <Search className="w-4 h-4 text-[#706259] absolute left-3.5 top-3" />
               <input
                 type="text"
-                placeholder="Search name, ID, or phone..."
+                placeholder="በስም፣ በ ID ወይም በስልክ ፈልግ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl pl-10 pr-4 py-2 text-xs text-[#2C221E] placeholder-[#A6978A] focus:outline-none focus:border-[#B8860B] shadow-sm font-medium"
               />
             </div>
 
             <div className="flex items-center gap-2 self-end sm:self-auto">
-              <span className="text-xs text-slate-400 font-medium">Batch Filter:</span>
+              <span className="text-xs text-[#706259] font-bold font-ethiopic">የባች ማጣሪያ:</span>
               <select
                 value={selectedBatchFilter}
                 onChange={(e) =>
@@ -722,9 +724,9 @@ export default function DepartmentHeadDashboard() {
                     e.target.value === "ALL" ? "ALL" : Number(e.target.value)
                   )
                 }
-                className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-1.5 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B] shadow-sm"
               >
-                <option value="ALL">All Batches (Years 1–5)</option>
+                <option value="ALL">ሁሉም ባቾች (Years 1–5)</option>
                 <option value={1}>Year 1 (Freshman)</option>
                 <option value={2}>Year 2 (Sophomore)</option>
                 <option value={3}>Year 3 (Junior)</option>
@@ -734,39 +736,39 @@ export default function DepartmentHeadDashboard() {
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
+          <div className="overflow-x-auto rounded-3xl border border-[#EADBCE] bg-[#FFFFFF] shadow-sm">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800">
+              <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
                 <tr>
-                  <th className="py-3 px-4">Student</th>
-                  <th className="py-3 px-4">Student ID</th>
-                  <th className="py-3 px-4">Batch</th>
-                  <th className="py-3 px-4">Telegram Phone</th>
-                  <th className="py-3 px-4">Recent Status</th>
-                  <th className="py-3 px-4">Attendance Rate</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-4 font-ethiopic">ተማሪ (Student)</th>
+                  <th className="py-3 px-4">የተማሪ መታወቂያ</th>
+                  <th className="py-3 px-4">ባች</th>
+                  <th className="py-3 px-4">የቴሌግራም ስልክ ቁጥር</th>
+                  <th className="py-3 px-4">የቅርብ ሁኔታ</th>
+                  <th className="py-3 px-4">የአቴንዳንስ ምጣኔ</th>
+                  <th className="py-3 px-4 text-right font-ethiopic">የፈቃድ ማስተካከያ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-[#EADBCE]">
                 {filteredStudents.map((s) => (
-                  <tr key={s.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3 px-4 font-bold text-white flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-xs">
+                  <tr key={s.id} className="hover:bg-[#F9F6F0] transition-colors">
+                    <td className="py-3 px-4 font-bold text-[#2C221E] flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-[#F4EFE6] text-[#706259] flex items-center justify-center font-bold text-xs border border-[#EADBCE]">
                         {s.name[0]}
                       </div>
                       {s.name}
                     </td>
-                    <td className="py-3 px-4 font-mono text-slate-300">{s.studentId}</td>
-                    <td className="py-3 px-4">Year {s.batchYear}</td>
-                    <td className="py-3 px-4 font-mono text-slate-300">{s.phoneNumber}</td>
+                    <td className="py-3 px-4 font-mono text-[#706259]">{s.studentId}</td>
+                    <td className="py-3 px-4 font-bold text-[#2C221E]">Year {s.batchYear}</td>
+                    <td className="py-3 px-4 font-mono text-[#706259]">{s.phoneNumber}</td>
                     <td className="py-3 px-4">
                       <span
-                        className={`px-2 py-0.5 rounded font-bold text-[10px] ${
+                        className={`px-2 py-0.5 rounded-md font-bold text-[10px] ${
                           s.status === "PRESENT"
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            ? "bg-[#E8F3EE] text-[#1E7E53] border border-[#C2E8CA]"
                             : s.status === "EXCUSED"
-                            ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                            : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                            ? "bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30"
+                            : "bg-[#FAEAE9] text-[#B83833] border border-[#F8D7DA]"
                         }`}
                       >
                         {s.status}
@@ -774,12 +776,12 @@ export default function DepartmentHeadDashboard() {
                     </td>
                     <td className="py-3 px-4">
                       <span
-                        className={`font-bold ${
+                        className={`font-black ${
                           s.attendanceRate >= 85
-                            ? "text-emerald-400"
+                            ? "text-[#1E7E53]"
                             : s.attendanceRate >= 75
-                            ? "text-amber-400"
-                            : "text-rose-400"
+                            ? "text-[#B8860B]"
+                            : "text-[#B83833]"
                         }`}
                       >
                         {s.attendanceRate}%
@@ -789,12 +791,12 @@ export default function DepartmentHeadDashboard() {
                       {s.status === "ABSENT" ? (
                         <button
                           onClick={() => setSelectedRecordForExcuse(s)}
-                          className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/20 rounded-lg text-xs font-semibold transition-colors"
+                          className="px-3 py-1 bg-[#FBF2DE] hover:bg-[#B8860B] hover:text-white text-[#B8860B] border border-[#B8860B]/30 rounded-xl text-xs font-bold transition-all font-ethiopic"
                         >
-                          Reconcile / Excuse
+                          ፈቃድ መዝግብ (Excuse)
                         </button>
                       ) : (
-                        <span className="text-slate-500 text-[11px]">Reconciled</span>
+                        <span className="text-[#A6978A] text-[11px] font-medium font-ethiopic">የጸደቀ (Reconciled)</span>
                       )}
                     </td>
                   </tr>
@@ -809,12 +811,12 @@ export default function DepartmentHeadDashboard() {
       {activeTab === "upload" && (
         <section className="space-y-6">
           <div className="space-y-1">
-            <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              <Upload className="w-4 h-4 text-blue-400" />
-              Drag & Drop Student Roster Whitelisting
+            <h2 className="text-sm font-black text-[#2C221E] flex items-center gap-2 font-ethiopic">
+              <Upload className="w-4 h-4 text-[#B8860B]" />
+              የተማሪዎች መዝገብ ፋይል ጎትቶ ማስገቢያ (Drag & Drop Whitelist)
             </h2>
-            <p className="text-xs text-slate-400">
-              Upload class roster files (.csv, .xlsx, .xls). Telegram phone numbers are automatically normalized and serve as the single-device hardware anchor.
+            <p className="text-xs text-[#706259] font-ethiopic">
+              የክፍል ተማሪዎች መዝገብ ፋይሎችን (.csv, .xlsx, .xls) ያስገቡ። የቴሌግራም ስልክ ቁጥራቸው ወዲያውኑ ይረጋገጣል (Validate ይደረጋል)።
             </p>
           </div>
 
@@ -829,8 +831,8 @@ export default function DepartmentHeadDashboard() {
             onClick={() => fileInputRef.current?.click()}
             className={`p-10 border-2 border-dashed rounded-3xl text-center cursor-pointer transition-all flex flex-col items-center justify-center space-y-3 ${
               isDragging
-                ? "border-blue-500 bg-blue-500/10 scale-[1.01]"
-                : "border-slate-800 bg-slate-900/40 hover:border-slate-700"
+                ? "border-[#B8860B] bg-[#FBF2DE] scale-[1.01]"
+                : "border-[#EADBCE] bg-[#FFFFFF] hover:border-[#B8860B] shadow-sm"
             }`}
           >
             <input
@@ -840,22 +842,22 @@ export default function DepartmentHeadDashboard() {
               onChange={handleFileInputChange}
               className="hidden"
             />
-            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30 flex items-center justify-center shadow-sm">
               <FileSpreadsheet className="w-7 h-7" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-bold text-white">
-                {uploadFileName ? `Selected: ${uploadFileName}` : "Drag and drop your roster file here"}
+              <p className="text-sm font-bold text-[#2C221E] font-ethiopic">
+                {uploadFileName ? `የተመረጠ ፋይል: ${uploadFileName}` : "የተማሪዎችን Excel / CSV ፋይል እዚህ ይጎትቱ ወይም ይጫኑ"}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#706259]">
                 Supports Microsoft Excel (.xlsx, .xls) and Comma-Separated Values (.csv)
               </p>
             </div>
             <button
               type="button"
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl transition-colors"
+              className="px-4 py-2 bg-[#F4EFE6] hover:bg-[#EADBCE] text-[#2C221E] font-bold text-xs rounded-xl transition-colors font-ethiopic"
             >
-              Browse Local File
+              ከኮምፒውተር ይምረጡ (Browse File)
             </button>
           </div>
 
@@ -876,48 +878,48 @@ export default function DepartmentHeadDashboard() {
           {parsedUploadRows.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                  Roster File Preview ({parsedUploadRows.length} Students Detected)
+                <h3 className="text-xs font-bold text-[#706259] uppercase tracking-wider font-ethiopic">
+                  የተማሪዎች መዝገብ ቅድመ-ዕይታ ({parsedUploadRows.length} ተማሪዎች ተገኝተዋል)
                 </h3>
                 <button
                   disabled={isSubmittingUpload}
                   onClick={handleCommitUpload}
-                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                  className="px-5 py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50 font-ethiopic"
                 >
-                  {isSubmittingUpload ? "Synchronizing Whitelist..." : "Confirm & Synchronize Whitelist"}
+                  {isSubmittingUpload ? "በማመሳሰል ላይ ነው..." : "አረጋግጥና መዝገቡን አመሳስል"}
                 </button>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
+              <div className="overflow-x-auto rounded-3xl border border-[#EADBCE] bg-[#FFFFFF] shadow-sm">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800">
+                  <thead className="bg-[#FBF2DE] text-[#706259] font-bold border-b border-[#EADBCE]">
                     <tr>
-                      <th className="py-2.5 px-4">Full Name</th>
-                      <th className="py-2.5 px-4">Student ID</th>
-                      <th className="py-2.5 px-4">Telegram Phone Number</th>
-                      <th className="py-2.5 px-4">Batch</th>
-                      <th className="py-2.5 px-4">Semester</th>
-                      <th className="py-2.5 px-4 text-right">Validation</th>
+                      <th className="py-2.5 px-4 font-ethiopic">ሙሉ ስም</th>
+                      <th className="py-2.5 px-4">የተማሪ መታወቂያ</th>
+                      <th className="py-2.5 px-4">የቴሌግራም ስልክ ቁጥር</th>
+                      <th className="py-2.5 px-4">ባች</th>
+                      <th className="py-2.5 px-4">ሴሚስተር</th>
+                      <th className="py-2.5 px-4 text-right font-ethiopic">የቁጥር ትክክለኛነት</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 font-mono">
+                  <tbody className="divide-y divide-[#EADBCE] font-mono">
                     {parsedUploadRows.slice(0, 8).map((row, i) => (
-                      <tr key={i} className="hover:bg-slate-800/30">
-                        <td className="py-2.5 px-4 font-sans font-semibold text-white">
+                      <tr key={i} className="hover:bg-[#F9F6F0]">
+                        <td className="py-2.5 px-4 font-sans font-bold text-[#2C221E]">
                           {row.fullName}
                         </td>
-                        <td className="py-2.5 px-4 text-slate-300">{row.studentId}</td>
-                        <td className="py-2.5 px-4 text-slate-200">{row.phoneNumber}</td>
-                        <td className="py-2.5 px-4 font-sans">Year {row.batchYear}</td>
-                        <td className="py-2.5 px-4 font-sans">Sem {row.semester}</td>
+                        <td className="py-2.5 px-4 text-[#706259]">{row.studentId}</td>
+                        <td className="py-2.5 px-4 text-[#2C221E]">{row.phoneNumber}</td>
+                        <td className="py-2.5 px-4 font-sans font-medium text-[#706259]">Year {row.batchYear}</td>
+                        <td className="py-2.5 px-4 font-sans font-medium text-[#706259]">Sem {row.semester}</td>
                         <td className="py-2.5 px-4 text-right font-sans">
                           {row.isValidPhone ? (
-                            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
-                              Valid E.164
+                            <span className="text-[10px] font-bold text-[#1E7E53] bg-[#E8F3EE] px-2 py-0.5 rounded-md border border-[#C2E8CA]">
+                              ትክክለኛ E.164
                             </span>
                           ) : (
-                            <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">
-                              Check Format
+                            <span className="text-[10px] font-bold text-[#B8860B] bg-[#FBF2DE] px-2 py-0.5 rounded-md border border-[#B8860B]/30">
+                              ቅርጹን ይፈትሹ
                             </span>
                           )}
                         </td>
@@ -927,8 +929,8 @@ export default function DepartmentHeadDashboard() {
                 </table>
               </div>
               {parsedUploadRows.length > 8 && (
-                <p className="text-[11px] text-slate-500 text-center">
-                  Showing 8 of {parsedUploadRows.length} parsed records...
+                <p className="text-[11px] text-[#706259] text-center font-medium font-ethiopic">
+                  ከ {parsedUploadRows.length} ተማሪዎች ውስጥ 8ቱ እየታዩ ነው...
                 </p>
               )}
             </div>
@@ -938,64 +940,64 @@ export default function DepartmentHeadDashboard() {
 
       {/* BROADCAST AT-RISK WARNING MODAL */}
       {isBroadcastModalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 max-w-lg w-full space-y-5 animate-in fade-in-50 zoom-in-95">
+        <div className="fixed inset-0 bg-[#2C221E]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-2xl max-w-lg w-full space-y-5 animate-in fade-in-50 zoom-in-95">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <AlertOctagon className="w-5 h-5 text-rose-500" />
-                  Broadcast Urgent Telegram Warning
+                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2 font-ethiopic">
+                  <AlertOctagon className="w-5 h-5 text-[#B83833]" />
+                  አስቸኳይ የቴሌግራም ማስጠንቀቂያ መላኪያ
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Sends an official direct notification to all at-risk students in a batch.
+                <p className="text-xs text-[#706259] font-ethiopic">
+                  ከ 75% በታች ለቀሩ የባቹ ተማሪዎች በሙሉ በቴሌግራም ቦት በቀጥታ ይላካል።
                 </p>
               </div>
               <button
                 onClick={() => setIsBroadcastModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-xl text-[#706259] hover:text-[#2C221E] hover:bg-[#F4EFE6]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300">Select Target Batch</label>
+              <label className="text-xs font-bold text-[#706259] font-ethiopic">የተማሪዎች ባች ይምረጡ</label>
               <select
                 value={broadcastTargetBatch}
                 onChange={(e) => setBroadcastTargetBatch(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
+                className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl px-3 py-2 text-xs text-[#2C221E] font-medium focus:outline-none focus:border-[#B8860B]"
               >
                 <option value={1}>Year 1 (Freshman)</option>
                 <option value={2}>Year 2 (Sophomore)</option>
-                <option value={3}>Year 3 (Junior - 3 At-Risk Students)</option>
+                <option value={3}>Year 3 (Junior - 3 የቀሩ ተማሪዎች)</option>
                 <option value={4}>Year 4 (Senior)</option>
-                <option value={5}>Year 5 (Finalists - 5 At-Risk Students)</option>
+                <option value={5}>Year 5 (Finalists - 5 የቀሩ ተማሪዎች)</option>
               </select>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Warning Message (Amharic & English)</label>
+              <label className="text-xs font-bold text-[#706259] font-ethiopic">የማስጠንቀቂያ መልዕክት</label>
               <textarea
                 rows={4}
                 value={customBroadcastMessage}
                 onChange={(e) => setCustomBroadcastMessage(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-rose-500 font-sans"
+                className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl p-3 text-xs text-[#2C221E] focus:outline-none focus:border-[#B8860B] font-sans"
               />
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setIsBroadcastModalOpen(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
+                className="px-4 py-2 text-xs font-bold text-[#706259] hover:text-[#2C221E]"
               >
-                Cancel
+                ሰርዝ (Cancel)
               </button>
               <button
                 disabled={isSendingBroadcast}
                 onClick={handleBroadcastBatchWarning}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-600/20 transition-all disabled:opacity-50"
+                className="px-4 py-2.5 bg-[#B83833] hover:bg-[#9E2A26] text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50 font-ethiopic"
               >
-                {isSendingBroadcast ? "Dispatching..." : "Dispatch Broadcast Warning"}
+                {isSendingBroadcast ? "በመላክ ላይ ነው..." : "ማስጠንቀቂያውን አሁን ላክ"}
               </button>
             </div>
           </div>
@@ -1004,68 +1006,70 @@ export default function DepartmentHeadDashboard() {
 
       {/* EXCUSE RECONCILIATION MODAL */}
       {selectedRecordForExcuse && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 max-w-lg w-full space-y-5 animate-in fade-in-50 zoom-in-95">
+        <div className="fixed inset-0 bg-[#2C221E]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] shadow-2xl max-w-lg w-full space-y-5 animate-in fade-in-50 zoom-in-95">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <FileCheck className="w-5 h-5 text-amber-400" />
-                  Absence Reconciliation & Excuse Override
+                <h3 className="text-base font-black text-[#2C221E] flex items-center gap-2 font-ethiopic">
+                  <FileCheck className="w-5 h-5 text-[#B8860B]" />
+                  የቀረበትን ምክንያት ማስተካከያና ፈቃድ መዝገብ (Excuse Override)
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Update an unverified absence to EXCUSED with audit documentation.
+                <p className="text-xs text-[#706259] font-ethiopic">
+                  ያልተረጋገጠ የቀረበትን ሁኔታ በህክምና ወይም ይፋዊ ማስረጃ ወደ EXCUSED ይቀይሩ።
                 </p>
               </div>
               <button
                 onClick={() => setSelectedRecordForExcuse(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-xl text-[#706259] hover:text-[#2C221E] hover:bg-[#F4EFE6]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1 text-xs">
+            <div className="bg-[#FBF2DE] p-4 rounded-2xl border border-[#B8860B]/30 space-y-1 text-xs">
               <p>
-                <strong className="text-slate-400">Student:</strong>{" "}
-                <span className="text-white font-bold">{selectedRecordForExcuse.name}</span> (
+                <strong className="text-[#706259] font-ethiopic">ተማሪ:</strong>{" "}
+                <span className="text-[#2C221E] font-black">{selectedRecordForExcuse.name}</span> (
                 {selectedRecordForExcuse.studentId})
               </p>
               <p>
-                <strong className="text-slate-400">Phone:</strong>{" "}
-                <span className="text-slate-200 font-mono">{selectedRecordForExcuse.phoneNumber}</span>
+                <strong className="text-[#706259] font-ethiopic">ስልክ:</strong>{" "}
+                <span className="text-[#2C221E] font-mono font-bold">{selectedRecordForExcuse.phoneNumber}</span>
               </p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
-                Official Excuse Justification Note <span className="text-rose-400">*</span>
+              <label className="text-xs font-bold text-[#706259] font-ethiopic">
+                የይፋዊ ማስረጃ ማብራሪያ (Excuse Reason) <span className="text-[#B83833]">*</span>
               </label>
               <textarea
                 rows={3}
-                placeholder="e.g., Medical certificate verified from University Student Clinic (Ref: MED-2026-904)"
+                placeholder="ምሳሌ: ከዩኒቨርሲቲው ተማሪዎች ክሊኒክ የተሰጠ የህክምና ማስረጃ ተረጋግጧል (Ref: MED-2026-904)..."
                 value={excuseNote}
                 onChange={(e) => setExcuseNote(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 placeholder-slate-500"
+                className="w-full bg-[#FFFFFF] border border-[#EADBCE] rounded-xl p-3 text-xs text-[#2C221E] focus:outline-none focus:border-[#B8860B] placeholder-[#A6978A]"
               />
             </div>
 
             {excuseNotification && (
-              <p className="text-xs text-emerald-400 font-semibold">{excuseNotification}</p>
+              <p className="text-xs text-[#1E7E53] font-bold p-2.5 bg-[#E8F3EE] rounded-xl border border-[#C2E8CA] font-ethiopic">
+                {excuseNotification}
+              </p>
             )}
 
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setSelectedRecordForExcuse(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white"
+                className="px-4 py-2 text-xs font-bold text-[#706259] hover:text-[#2C221E]"
               >
-                Cancel
+                ተመለስ (Cancel)
               </button>
               <button
                 disabled={isSubmittingExcuse || excuseNote.trim().length < 5}
                 onClick={handleSubmitExcuse}
-                className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50"
+                className="px-4 py-2.5 btn-ochre text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50 font-ethiopic"
               >
-                {isSubmittingExcuse ? "Logging..." : "Confirm & Excuse Record"}
+                {isSubmittingExcuse ? "በመመዝገብ ላይ..." : "አጽድቅና ፈቃድ መዝግብ (Confirm Excuse)"}
               </button>
             </div>
           </div>
