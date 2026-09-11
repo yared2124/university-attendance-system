@@ -3,9 +3,9 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "University Smart Attendance | Telegram-Integrated System",
+  title: "የክፍል አቴንዳንስ መከታተያ | Smart University Attendance",
   description:
-    "Secure, anti-proxy, low-latency university class attendance management system with Telegram Bot & Mini App integration.",
+    "ለኢትዮጵያ ዩኒቨርሲቲዎች የተዘጋጀ አስተማማኝ እና ዘመናዊ የቴሌግራም አቴንዳንስ ሲስተም።",
 };
 
 export const viewport: Viewport = {
@@ -21,9 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="am" suppressHydrationWarning>
       <head>
-        {/* Official Telegram WebApp SDK - loaded afterInteractive to avoid hydration style mismatch */}
         <Script
           src="https://telegram.org/js/telegram-web-app.js"
           strategy="afterInteractive"
@@ -31,7 +30,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="min-h-screen bg-slate-950 text-slate-100 selection:bg-blue-500/30 selection:text-blue-200 antialiased"
+        className="min-h-screen bg-[#F9F6F0] text-[#2C221E] antialiased selection:bg-[#B8860B]/20 selection:text-[#B8860B]"
       >
         {children}
       </body>

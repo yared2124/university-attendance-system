@@ -1,85 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --tg-theme-bg-color: #0f172a;
-  --tg-theme-secondary-bg-color: #1e293b;
-  --tg-theme-text-color: #f8fafc;
-  --tg-theme-hint-color: #94a3b8;
-  --tg-theme-link-color: #38bdf8;
-  --tg-theme-button-color: #2563eb;
-  --tg-theme-button-text-color: #ffffff;
+  /* Warm editorial parchment & Ethiopian aesthetic palette */
+  --parchment-bg: #F9F6F0;
+  --parchment-surface: #FFFFFF;
+  --parchment-card: #FFFFFF;
+  --parchment-accent: #B8860B; /* Golden ochre */
+  --parchment-accent-hover: #996F00;
+  --parchment-text-primary: #2C221E; /* Deep espresso charcoal */
+  --parchment-text-secondary: #706259; /* Warm earthy taupe */
+  --parchment-border: #EADBCE;
+  --parchment-pill: #F2ECE1;
+  --parchment-card-shadow: 0 4px 20px -2px rgba(92, 70, 53, 0.06), 0 2px 6px -1px rgba(92, 70, 53, 0.04);
 }
 
 body {
-  background-color: var(--tg-theme-bg-color);
-  color: var(--tg-theme-text-color);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--parchment-bg);
+  color: var(--parchment-text-primary);
+  font-family: 'Plus Jakarta Sans', 'Noto Sans Ethiopic', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
 }
 
-/* Telegram Mini App Theme Support */
-.tg-theme-applied {
-  background-color: var(--tg-theme-bg-color) !important;
-  color: var(--tg-theme-text-color) !important;
+/* Ethiopic & Heading font styling */
+.font-ethiopic {
+  font-family: 'Noto Sans Ethiopic', 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Glassmorphism Classes */
-.glass-panel {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Warm Card container matching reference */
+.warm-card {
+  background: var(--parchment-card);
+  border: 1px solid var(--parchment-border);
+  box-shadow: var(--parchment-card-shadow);
+  border-radius: 1.5rem; /* rounded-3xl */
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-card {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+.warm-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -4px rgba(92, 70, 53, 0.1);
+  border-color: #D4C0AD;
 }
 
-/* Scanner Laser Animation */
-@keyframes scan-laser {
-  0% {
-    top: 5%;
-    opacity: 0.8;
-  }
-  50% {
-    top: 90%;
-    opacity: 1;
-  }
-  100% {
-    top: 5%;
-    opacity: 0.8;
-  }
+/* Golden Ochre Pill button matching reference */
+.btn-ochre {
+  background-color: #B8860B;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 1rem;
+  transition: all 0.15s ease-in-out;
 }
 
-.animate-scanner-laser {
-  animation: scan-laser 2s infinite ease-in-out;
+.btn-ochre:hover {
+  background-color: #9E7307;
+  transform: scale(0.99);
 }
 
-/* Smooth Circular Countdown */
-.countdown-circle {
-  transition: stroke-dashoffset 1s linear;
-}
-
-/* Custom Scrollbars */
+/* Clean Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
+  background: #F3EDE4;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: #D9CBBD;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.4);
+  background: #BFA997;
 }
