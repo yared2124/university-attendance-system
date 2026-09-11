@@ -22,12 +22,12 @@ bot.command("start", async (ctx) => {
     const welcomeMsg =
       `👋 *እንኳን ደህና መጡ / Welcome back, ${existingUser.fullName}!* ${roleEmoji}\n\n` +
       `📌 *ID / ምዝገባ:* \`${existingUser.studentId || "Faculty Member"}\`\n` +
-      `📚 *Batch Year:* ${existingUser.batchYear ? `Year ${existingUser.batchYear}` : "Staff"}\n` +
-      `🛡️ *Hardware Status:* \`SECURE & VERIFIED\`\n\n` +
-      `የክፍል አቴንዳንስዎን ለማረጋገጥ ከታች ያለውን *Mini App* ይክፈቱ ወይም መምህሩ የሚያሳየውን የ 6-ዲጂት Rolling Code በቀጥታ በዚህ ቻት ይላኩ።`;
+      `📚 *Department:* Software Engineering (Year ${existingUser.batchYear || "Staff"})\n` +
+      `🛡️ *Status:* \`VERIFIED STUDENT (ቋሚ ምዝገባ)\`\n\n` +
+      `የክፍል አቴንዳንስዎን ለመመዝገብ ከታች ያለውን *\"📸 Scan QR Code / ፎቶ አንሳ\"* ቁልፍ በመጫን የመምህሩን ስክሪን ስካን ያድርጉ ወይም የ 6-ዲጂት Rolling Code በቀጥታ በዚህ ቻት ይላኩ።`;
 
     const keyboard = new InlineKeyboard()
-      .webApp("🚀 Open Attendance Mini App", `${appUrl}/mini-app`)
+      .webApp("📸 Scan QR Code / ፎቶ አንሳ", `${appUrl}/mini-app`)
       .row()
       .text("📊 My Attendance Stats", "btn_stats")
       .text("ℹ️ Help / ድጋፍ", "btn_help");
@@ -37,12 +37,18 @@ bot.command("start", async (ctx) => {
   }
 
   // If user is not bound yet, prompt for secure contact verification
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const promptMsg =
     `🏛️ *Department of Software Engineering*\n` +
     `*Smart Class Attendance & Verification System*\n\n` +
-    `ሰላም *${from.first_name}*! ይህን የዲፓርትመንት አቴንዳንስ ሲስተም ለመጠቀም የስልክ ቁጥርዎን አንድ ጊዜ ማረጋገጥ (Single-Device Verification) ይኖርብዎታል:\n\n` +
-    `🔒 *ደህንነት:* የተማሪ መታወቂያዎ በቀጥታ ከዚህ ቴሌግራም አካውንት ጋር በዲፓርትመንቱ ቋሚ ሪከርድነት ይመዘገባል።\n\n` +
-    `እባክዎን ከታች ያለውን አረንጓዴ *\"📲 Share Contact / ስልክ ቁጥር አረጋግጥ\"* የሚለውን ቁልፍ ይጫኑ።`;
+    `ሰላም *${from.first_name}*! ይህን የዲፓርትመንት አቴንዳንስ ሲስተም ለመጠቀም የተማሪነት ማንነትዎን አንድ ጊዜ ማረጋገጥ (Single-Device Verification) ይኖርብዎታል:\n\n` +
+    `🔒 *ደህንነት:* የተማሪ መታወቂያዎ በቀጥታ ከዚህ ቴሌግራም አካውንት ጋር በዲፓርትመንቱ ቋሚ ሪከርድነት ይመዘገባል (አንዴ ከተመዘገበ በቋሚነት አይቋረጥም)።\n\n` +
+    `👉 ከታች ያለውን *\"📲 Share Contact\"* ይጫኑ ወይም *\"🔑 Enter ID Manually\"* በመምረጥ የተማሪ መታወቂያ ቁጥርዎን ያስገቡ።`;
+
+  const inlineVerify = new InlineKeyboard()
+    .webApp("🔑 Enter ID & Phone / መታወቂያ አስገባ", `${appUrl}/mini-app`);
+
+  await ctx.reply(promptMsg, { parse_mode: "Markdown", reply_markup: inlineVerify });
 
   const requestContactKeyboard = new Keyboard()
     .requestContact("📲 Share Contact to Verify Identity / ስልክ ቁጥር አረጋግጥ")
@@ -50,6 +56,19 @@ bot.command("start", async (ctx) => {
     .oneTime();
 
   await ctx.reply(promptMsg, { parse_mode: "Markdown", reply_markup: requestContactKeyboard });
+});
+
+// 1.1 Command /scan (Instant Camera QR Scanner)
+bot.command("scan", async (ctx) => {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const keyboard = new InlineKeyboard().webApp(
+    "📸 Launch Camera QR Scanner / ፎቶ አንሳ",
+    `${appUrl}/mini-app`
+  );
+  await ctx.reply(
+    `📷 *Camera QR Scanner*\n\nየመምህሩን ፕሮጀክተር ስክሪን ስካን ለማድረግ ከታች ያለውን ቁልፍ ይጫኑ:`,
+    { parse_mode: "Markdown", reply_markup: keyboard }
+  );
 });
 
 // 2. Contact Verification Handler with Anti-Spoofing Rule FR-1.2
