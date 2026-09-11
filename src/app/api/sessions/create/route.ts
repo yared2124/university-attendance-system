@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
       courseId,
       openedById,
       mode: mode as SessionMode,
+      semester: course.semester,
       isClosed: false,
       createdAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + durationMinutes * 60 * 1000).toISOString(),
