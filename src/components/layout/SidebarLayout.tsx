@@ -36,6 +36,8 @@ interface SidebarProps {
   navItems: NavItem[];
   activeItemId: string;
   onSelectItem: (id: string) => void;
+  topHeaderActions?: React.ReactNode;
+  academicTerm?: string;
   children: React.ReactNode;
 }
 
@@ -47,9 +49,12 @@ export default function SidebarLayout({
   navItems,
   activeItemId,
   onSelectItem,
+  topHeaderActions,
+  academicTerm,
   children,
 }: SidebarProps) {
   const pathname = usePathname();
+  const currentItem = navItems.find((item) => item.id === activeItemId);
 
   return (
     <div className="min-h-screen bg-[#F9F6F0] text-[#2C221E] flex flex-col md:flex-row">
@@ -151,11 +156,39 @@ export default function SidebarLayout({
           </Link>
         </div>
       </aside>
+ 
+      {/* RIGHT MAIN CONTENT AREA WITH TOPBAR */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {/* Sleek Institutional Topbar */}
+        <header className="bg-[#FFFFFF] border-b border-[#EADBCE] px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-20 shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xs font-semibold text-[#706259]">
+              {portalTitle}
+            </span>
+            <span className="text-[#EADBCE]">/</span>
+            <span className="text-xs font-black text-[#2C221E] uppercase tracking-wide flex items-center gap-2">
+              {currentItem?.icon && (
+                <span className="text-[#B8860B]">{currentItem.icon}</span>
+              )}
+              {currentItem?.label || "Dashboard"}
+            </span>
+          </div>
 
-      {/* RIGHT MAIN CONTENT AREA */}
-      <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full overflow-y-auto space-y-8">
-        {children}
-      </main>
+          <div className="flex items-center gap-3">
+            {academicTerm && (
+              <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30">
+                {academicTerm}
+              </span>
+            )}
+            {topHeaderActions}
+          </div>
+        </header>
+
+        {/* Content Container */}
+        <main className="p-6 md:p-8 max-w-7xl w-full mx-auto space-y-6">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

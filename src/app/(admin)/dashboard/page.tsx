@@ -680,105 +680,71 @@ export default function DepartmentHeadDashboard() {
       navItems={navItems}
       activeItemId={activeTab}
       onSelectItem={(id) => setActiveTab(id as any)}
-    >
-      {/* Top Academic Context & Header */}
-      <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-[#EADBCE] pb-6">
-        <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#FBF2DE] border border-[#B8860B]/30 flex items-center justify-center shrink-0 shadow-sm">
-            <Building2 className="w-7 h-7 text-[#B8860B]" />
+      academicTerm={`${academicYear} • Semester ${selectedSemester}`}
+      topHeaderActions={
+        <div className="flex items-center gap-2">
+          {/* Department Selector */}
+          <div className="flex items-center gap-1.5 bg-[#F9F6F0] border border-[#EADBCE] rounded-xl px-2.5 py-1 text-xs text-[#2C221E] font-bold">
+            <span className="text-[#706259] font-medium hidden sm:inline">Dept:</span>
+            <select
+              value={selectedDepartment}
+              onChange={(e) => setSelectedDepartment(e.target.value)}
+              className="bg-transparent font-bold text-[#2C221E] focus:outline-none cursor-pointer text-xs"
+            >
+              <option value="Software Engineering">Software Engineering</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+            </select>
           </div>
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#FBF2DE] text-[#B8860B] border border-[#B8860B]/30">
-                Injibara University
-              </span>
 
-              {/* Department Switcher */}
-              <div className="flex items-center gap-1 bg-[#FFFFFF] border border-[#EADBCE] rounded-lg px-2.5 py-0.5 text-xs text-[#2C221E] font-bold shadow-sm">
-                <span className="text-[#706259] font-medium">Dept:</span>
-                <select
-                  value={selectedDepartment}
-                  onChange={(e) => setSelectedDepartment(e.target.value)}
-                  className="bg-transparent font-bold text-[#2C221E] focus:outline-none cursor-pointer"
-                >
-                  <option value="Software Engineering">Software Engineering</option>
-                  <option value="Computer Science">Computer Science</option>
-                  <option value="Information Technology">Information Technology</option>
-                </select>
-              </div>
-
-              {/* Academic Year Selector */}
-              <div className="flex items-center gap-1.5 bg-[#FFFFFF] border border-[#EADBCE] rounded-lg px-2.5 py-1 text-xs text-[#706259] font-bold shadow-sm">
-                <Calendar className="w-3.5 h-3.5 text-[#B8860B]" />
-                <span>{academicYear}</span>
-              </div>
-
-              {/* Semester Switcher Tabs */}
-              <div className="flex items-center bg-[#ECE4D8] border border-[#EADBCE] rounded-xl p-1">
-                <button
-                  onClick={() => setSelectedSemester(1)}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
-                    selectedSemester === 1
-                      ? "bg-[#B8860B] text-white shadow-sm"
-                      : "text-[#706259] hover:text-[#2C221E]"
-                  }`}
-                >
-                  Semester 1
-                </button>
-                <button
-                  onClick={() => setSelectedSemester(2)}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
-                    selectedSemester === 2
-                      ? "bg-[#B8860B] text-white shadow-sm"
-                      : "text-[#706259] hover:text-[#2C221E]"
-                  }`}
-                >
-                  Semester 2
-                </button>
-              </div>
-            </div>
-
-            <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-[#2C221E]">
-              Department Head Console • {selectedDepartment}
-            </h1>
-            <p className="text-xs text-[#706259] font-medium">
-              Academic Cohort Oversight, Faculty Onboarding, Course Assignment & Roster Whitelisting
-            </p>
+          {/* Semester Switcher Tabs */}
+          <div className="flex items-center bg-[#ECE4D8] border border-[#EADBCE] rounded-xl p-0.5">
+            <button
+              onClick={() => setSelectedSemester(1)}
+              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
+                selectedSemester === 1
+                  ? "bg-[#B8860B] text-white shadow-xs"
+                  : "text-[#706259] hover:text-[#2C221E]"
+              }`}
+            >
+              Sem 1
+            </button>
+            <button
+              onClick={() => setSelectedSemester(2)}
+              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
+                selectedSemester === 2
+                  ? "bg-[#B8860B] text-white shadow-xs"
+                  : "text-[#706259] hover:text-[#2C221E]"
+              }`}
+            >
+              Sem 2
+            </button>
           </div>
-        </div>
 
-        {/* Action Controls */}
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => setIsAddFacultyModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-all"
-          >
-            <UserPlus className="w-4 h-4 text-[#B8860B]" />
-            Onboard Faculty Member
-          </button>
-          <button
-            onClick={() => setIsBroadcastModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#FAEAE9] border border-[#F8D7DA] hover:bg-[#F8D7DA] text-[#B83833] font-bold text-xs rounded-xl shadow-sm transition-all"
-          >
-            <AlertOctagon className="w-4 h-4 text-[#B83833]" />
-            Broadcast Warning
-          </button>
+          {/* Export Report Action */}
           <a
             href={`/api/admin/export?batchYear=${selectedBatchFilter === "ALL" ? 3 : selectedBatchFilter}`}
             target="_blank"
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] text-[#2C221E] font-bold text-xs rounded-xl shadow-sm transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#1E7E53] text-[#1E7E53] font-bold text-xs rounded-xl shadow-xs transition-colors"
+            title="Export Excel Attendance Report"
           >
-            <Download className="w-4 h-4 text-[#1E7E53]" />
-            Export Report (.xlsx)
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Export</span>
           </a>
+
+          {/* Link to Instructor View */}
           <Link
             href="/instructor"
-            className="flex items-center gap-2 px-4 py-2.5 btn-ochre text-xs font-bold rounded-xl shadow-md transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 btn-ochre text-white text-xs font-bold rounded-xl shadow-xs transition-all"
+            title="Switch to Instructor Control Deck"
           >
-            Instructor View <ArrowUpRight className="w-4 h-4" />
+            <span>Instructor View</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-      </header>
+      }
+    >
+      
 
       {/* Gmail Dispatched Notification Banner */}
       {gmailSentBanner && (
@@ -930,66 +896,96 @@ export default function DepartmentHeadDashboard() {
             </div>
           </section>
 
-          {/* Quick Action Navigation Tiles */}
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div
-              onClick={() => setActiveTab("atRisk")}
-              className="p-5 rounded-3xl bg-[#FAEAE9] border border-[#F8D7DA] hover:border-[#B83833] cursor-pointer transition-all space-y-2 group shadow-sm"
-            >
+          {/* REAL-TIME OPERATIONAL PANELS */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-1">
+            {/* Panel 1: Top Critical At-Risk Students */}
+            <div className="warm-card p-5 space-y-3 border-t-4 border-[#B83833]">
               <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-[#FFFFFF] text-[#B83833] flex items-center justify-center shadow-sm">
-                  <AlertTriangle className="w-5 h-5" />
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#FAEAE9] text-[#B83833] flex items-center justify-center">
+                    <AlertTriangle className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-[#2C221E] uppercase tracking-wider">
+                      Urgent Attendance Interventions (<span className="text-[#B83833]">{atRiskStudents.length}</span>)
+                    </h3>
+                    <p className="text-[11px] text-[#706259]">Students below the 75% examination eligibility bar</p>
+                  </div>
                 </div>
-                <span className="text-xs font-black text-[#B83833] bg-[#FFFFFF] px-2.5 py-0.5 rounded-lg">
-                  {atRiskStudents.length} Students
-                </span>
+                <button
+                  onClick={() => setActiveTab("atRisk")}
+                  className="text-xs font-bold text-[#B83833] hover:underline"
+                >
+                  View All &rarr;
+                </button>
               </div>
-              <h3 className="text-sm font-black text-[#2C221E] group-hover:text-[#B83833] transition-colors">
-                Critical At-Risk Action Center
-              </h3>
-              <p className="text-xs text-[#706259]">
-                View exam bar alerts, contact students directly by phone, or broadcast official Telegram warnings.
-              </p>
+
+              <div className="divide-y divide-[#EADBCE]">
+                {atRiskStudents.slice(0, 4).map((s) => (
+                  <div key={s.id} className="py-2.5 flex items-center justify-between text-xs">
+                    <div>
+                      <p className="font-bold text-[#2C221E]">{s.name}</p>
+                      <p className="text-[10px] text-[#706259] font-mono">{s.studentId} • Year {s.batchYear}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-black text-sm text-[#B83833]">{s.attendanceRate}%</span>
+                      <button
+                        onClick={() => handleSendTelegramWarning(s)}
+                        disabled={alertingStudentId === s.id}
+                        className="px-2.5 py-1 bg-[#FAEAE9] hover:bg-[#B83833] text-[#B83833] hover:text-white rounded-lg font-bold text-[11px] transition-all disabled:opacity-50"
+                      >
+                        {alertingStudentId === s.id ? "Sending..." : "Alert"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div
-              onClick={() => setActiveTab("facultyOnboarding")}
-              className="p-5 rounded-3xl bg-[#FBF2DE] border border-[#B8860B]/30 hover:border-[#B8860B] cursor-pointer transition-all space-y-2 group shadow-sm"
-            >
+            {/* Panel 2: Today's Faculty Compliance Snapshot */}
+            <div className="warm-card p-5 space-y-3 border-t-4 border-[#B8860B]">
               <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-[#FFFFFF] text-[#B8860B] flex items-center justify-center shadow-sm">
-                  <GraduationCap className="w-5 h-5" />
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#FBF2DE] text-[#B8860B] flex items-center justify-center">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-[#2C221E] uppercase tracking-wider">
+                      Today's Lecture Attendance Compliance
+                    </h3>
+                    <p className="text-[11px] text-[#706259]">Scheduled faculty classes & verified turnout</p>
+                  </div>
                 </div>
-                <span className="text-xs font-black text-[#B8860B] bg-[#FFFFFF] px-2.5 py-0.5 rounded-lg">
-                  {facultyList.length} Active
-                </span>
+                <button
+                  onClick={() => setActiveTab("facultyCompliance")}
+                  className="text-xs font-bold text-[#B8860B] hover:underline"
+                >
+                  Full Log &rarr;
+                </button>
               </div>
-              <h3 className="text-sm font-black text-[#2C221E] group-hover:text-[#B8860B] transition-colors">
-                Faculty Onboarding & Invites
-              </h3>
-              <p className="text-xs text-[#706259]">
-                Add new faculty members, generate temporary credentials, and dispatch automated Gmail invitations.
-              </p>
-            </div>
 
-            <div
-              onClick={() => setActiveTab("courseAssignment")}
-              className="p-5 rounded-3xl bg-[#FFFFFF] border border-[#EADBCE] hover:border-[#B8860B] cursor-pointer transition-all space-y-2 group shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-[#FBF2DE] text-[#B8860B] flex items-center justify-center shadow-sm">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <span className="text-xs font-black text-[#1E7E53] bg-[#E8F3EE] px-2.5 py-0.5 rounded-lg">
-                  {coursesList.length} Courses
-                </span>
+              <div className="divide-y divide-[#EADBCE]">
+                {facultyComplianceData.slice(0, 4).map((f, i) => (
+                  <div key={i} className="py-2.5 flex items-center justify-between text-xs">
+                    <div>
+                      <p className="font-bold text-[#2C221E]">{f.courseCode} - {f.facultyName}</p>
+                      <p className="text-[10px] text-[#706259]">{f.scheduledTime} • Year {f.batchYear}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[11px] text-[#706259]">{f.markedStudents}/{f.totalEnrolled}</span>
+                      {f.attendanceTaken ? (
+                        <span className="px-2 py-0.5 rounded-md font-bold text-[10px] bg-[#E8F3EE] text-[#1E7E53]">
+                          ✓ Taken
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-md font-bold text-[10px] bg-[#FAEAE9] text-[#B83833]">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <h3 className="text-sm font-black text-[#2C221E] group-hover:text-[#B8860B] transition-colors">
-                Course Assignment Engine
-              </h3>
-              <p className="text-xs text-[#706259]">
-                Assign faculty instructors to curriculum courses across Year 1 through Year 5 cohorts.
-              </p>
             </div>
           </section>
         </div>
